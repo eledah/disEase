@@ -1,0 +1,76 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+
+	<body>
+		<div id = "maintbl">
+			<div id = "div1">
+				<div style="margin-left: 10px;">
+					<table id = 'mainTABLE'> </table>
+					<div id = "div2">
+						<form action="#" method="post" class="demoForm" id="demoForm">
+
+							<p>
+								<button type="button" name="getVal" onclick="previousScenario()"><</button> 
+								<button type="button" name="getVal" onclick="INITIALIZE()">GO</button>
+								<button type="button" name="getVal" onclick="RESET()">RESET</button>
+								<button type="button" name="getVal" onclick="STEP()">STEP</button> 
+								<button type="button" name="getVal" onclick="toggleHeatVision()">HEAT</button> 
+								<button type="button" name="getVal" onclick="nextScenario()">></button> 
+							</p>
+
+							<p id="SCENARIO">1</p>						
+
+							
+							<p class ="slidercontainer">
+								<!-- INFECTION CHANCE -->
+								<input type="range" class="slider" min="0" max="100" value="50" step="1" class="slider" id="infectionCHANCE" onchange="updateChances()"> <br>
+								<lable id = "infLable"> INF.C </lable> <br>
+								<!-- IMMUNITY CHANCE -->
+								<input type="range" class="slider" min="0" max="100" value="50" step="1" class="slider" id="immunityCHANCE" onchange="updateChances()"> <br>
+								<lable id = "immLable"> IMM.C </lable> <br>
+								<!-- SPAR -->
+								<input type="range" class="slider" min="0" max="100" value="50" step="1" class="slider" id="spAR" onchange="updateChances()"> <br>
+								<lable id = "spARLable"> SP.A.R </lable> <br>
+							</p>
+							
+						</form>
+					</div>
+				</div>
+				<div class = "rightside">
+					<div class="chart" id="chartContainer" style="height: 70%; width: 100%;"></div> <br>
+					<div class="dataContainer" style="background-color: #FFFFFF; height: 20%; width: 100%;">
+						<table id="dataTable" style="width: 100%; height: 100%;">
+							<tr>
+								<td class="datatd">Healthy People:</td>
+								<td class="datatd">?</td>
+							</tr>
+
+							<tr>
+								<td class="datatd">Infected People:</td>
+								<td class="datatd">?</td>
+							</tr>
+							
+							<tr>
+								<td class="datatd">Avg. Infected</td>
+								<td class="datatd">?</td>
+							</tr>
+							
+							<tr>
+								<td class="datatd">Dead People</td>
+								<td class="datatd">?</td>
+							</tr>
+
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		
+	</body>
+
+	<script src="canvasjs.min.js"></script>
+	<script src="DISEASE.js"></script>
+</html>
