@@ -1,6 +1,6 @@
 "use strict";
 
-let currentScenario = 11;
+let currentScenario = 12;
 
 
 // States
@@ -215,7 +215,7 @@ let SCENES = [
 	},
 	// 12
 	function() {
-		loadScenario(35, 0.01, 100);
+		loadScenario(35, 0.01, 10);
 		setInfectionValues(0, 0.4, 10, true, 0, 0.2, 0.5, 0);
 		setInfectionValues(2, 1, 2, false, 0, 0.2, 1, 0);
 		cycleFunction = function() {
@@ -225,6 +225,51 @@ let SCENES = [
 				cycleFunction = function(){};
 			}
 		}
+	},
+	// 13
+	function() {
+		loadScenario(50, 0.04, 5);
+
+		setDegreeByRadius(25, 25, 15, 5);
+		setDegreeByRadius(25, 25, 7, 6);
+		setDegreeByRadius(25, 25, 3, 7);
+		setDegreeByRadius(25, 25, 1, 8);
+
+		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0, 0);
+		setInfectionValues(1, 0.5, 0, true, 0, 0.5, 0, 0);
+		setInfectionValues(2, 0.5, 0, true, 0, 0.5, 0, 0);
+		setInfectionValues(3, 0.5, 0, true, 0, 0.5, 0, 0);
+		
+		INFECTION[0].POWER = 1;
+		INFECTION[1].POWER = 1;
+		INFECTION[2].POWER = 1;
+		INFECTION[3].POWER = 1;
+
+
+		cycleFunction = function() {
+			let maxCycle = 500
+			let mod = CYCLE % maxCycle;
+			if(mod < maxCycle / 4 && mod >= 0){
+				MAIN[25][25] = INFECTION[0].VALUE;
+				INFECTION[0].POWER = 1.1;
+				INFECTION[3].POWER = 1;
+			}
+			if(mod < maxCycle / 2 && mod >= maxCycle / 4){
+				MAIN[25][25] = INFECTION[1].VALUE;
+				INFECTION[1].POWER = 1.1;
+				INFECTION[0].POWER = 1;
+			}
+			if(mod < maxCycle * 3 / 4 && mod >= maxCycle / 2){
+				MAIN[25][25] = INFECTION[2].VALUE;
+				INFECTION[2].POWER = 1.1;
+				INFECTION[1].POWER = 1;
+			}
+			if(mod < maxCycle && mod >= maxCycle * 3 / 4){
+				MAIN[25][25] = INFECTION[3].VALUE;
+				INFECTION[3].POWER = 1.1;
+				INFECTION[2].POWER = 1;
+			}
+		}
 	}
 ]
 
@@ -232,10 +277,10 @@ let SCENES = [
 
 
 // Infections
-let INFECTION_0 = {ID: 0, VALUE: 1.0, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#EC407A", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#94284C", RECOVERY_CHANCE: 0};
-let INFECTION_1 = {ID: 1, VALUE: 1.1, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#AB47BC", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#6A2D75", RECOVERY_CHANCE: 0};
-let INFECTION_2 = {ID: 2, VALUE: 1.2, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#66BB6A", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#3E7040", RECOVERY_CHANCE: 0};
-let INFECTION_3 = {ID: 3, VALUE: 1.3, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#FDD835", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#A89023", RECOVERY_CHANCE: 0};
+let INFECTION_0 = {ID: 0, VALUE: 1.0, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#EC407A", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#94284C", RECOVERY_CHANCE: 0, POWER: 1};
+let INFECTION_1 = {ID: 1, VALUE: 1.1, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#AB47BC", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#6A2D75", RECOVERY_CHANCE: 0, POWER: 2};
+let INFECTION_2 = {ID: 2, VALUE: 1.2, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#66BB6A", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#3E7040", RECOVERY_CHANCE: 0, POWER: 3};
+let INFECTION_3 = {ID: 3, VALUE: 1.3, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#FDD835", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#A89023", RECOVERY_CHANCE: 0, POWER: 4};
 
 // Infectious Immunities
 let IMMUNITY_0 = {ID: 100, VALUE: 3, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#B3E5FC", ENABLED: false, dps: [], immunityCHANCE: 0.005}
@@ -514,6 +559,10 @@ function isSusceptible(m, n) {
 		return false;
 }
 
+function getInfectionTypeByID(ID) {
+	return ID;
+}
+
 function getInfectionTypeByValue(VALUE) {
 	for(let i = 0; i < INFECTION.length; i++) {
 		if(INFECTION[i].VALUE == VALUE){
@@ -542,12 +591,13 @@ function isImmune(m, n) {
 		return false;
 }
 
-function infectWith(m, n, infectionType) {
-	if(Math.random() < INFECTION[getInfectionTypeByValue(infectionType)].INFECTION_CHANCE){
+function infectWith(m, n, infectionValue) {
+	let infectionID = getInfectionTypeByValue(infectionValue);
+	if(Math.random() < INFECTION[infectionID].INFECTION_CHANCE){
 		if(isSusceptible(m, n)){
-			SCND[m][n] = infectionType;
-		}else if(isInfected(m, n) && getState(m, n) < infectionType){
-			SCND[m][n] = infectionType;
+			SCND[m][n] = infectionValue;
+		}else if(isInfected(m, n) && INFECTION[infectionID].POWER > INFECTION[getInfectionTypeByValue(getState(m, n))].POWER){
+			SCND[m][n] = infectionValue;
 		}
 	}
 }
@@ -720,6 +770,13 @@ function infectDIRWith(m, n, d, infectionType) {
 	}
 }
 
+function getIdByValue(infectionValue) {
+	for(let i = 0; i < INFECTION.length - 1; i++){
+		if(INFECTION[i].VALUE == infectionValue)
+			return i;
+	}
+}
+
 function resolveTable() {
 	for(let i = 0; i < LEN; i++) {
 		for(let j = 0; j < LEN; j++) {
@@ -793,7 +850,7 @@ function resolveTable() {
 function advanceCycle() {
 	let deathCount = 0;
 	CYCLE++;
-	console.log("CYCLE: " + CYCLE);
+	// console.log("CYCLE: " + CYCLE);
 
 	for(let p = 0; p < INFECTION.length; p++) {
 		if(INFECTION[p].ENABLED && INFECTION[p].SPAR > 0){
@@ -806,17 +863,17 @@ function advanceCycle() {
 			SCND[i][j] = MAIN[i][j];
 		}
 	}
-	console.time('resolveTable');
+	// console.time('resolveTable');
 	resolveTable();
-	console.timeEnd('resolveTable');
+	// console.timeEnd('resolveTable');
 
-	console.time('cycleFunction');
+	// console.time('cycleFunction');
 	cycleFunction();
-	console.timeEnd('cycleFunction');
+	// console.timeEnd('cycleFunction');
 
-	console.time('countInfectedUntilNow');
+	// console.time('countInfectedUntilNow');
 	countInfectedUntilNow();
-	console.timeEnd('countInfectedUntilNow');
+	// console.timeEnd('countInfectedUntilNow');
 
 	// console.time('drawTable');
 	if(heatVision)
@@ -825,13 +882,13 @@ function advanceCycle() {
 		drawTable();
 	// console.timeEnd('drawTable');
 
-	console.time('updateChart');
+	// console.time('updateChart');
 	updateChart();
-	console.timeEnd('updateChart');
+	// console.timeEnd('updateChart');
 
-	console.time('updateDataTable');
+	// console.time('updateDataTable');
 	updateDataTable();
-	console.timeEnd('updateDataTable');
+	// console.timeEnd('updateDataTable');
 
 	deadThisRound = 0;
 }
@@ -866,7 +923,18 @@ function countInfected() {
 	return count;
 }
 
-function countInfectedByType(infectionValue) {
+function countInfectedByID(infectionID) {
+	let count = 0;
+	for(let i = 0; i < LEN; i++) {
+		for(let j = 0; j < LEN; j++){
+			if(MAIN[i][j] == INFECTION[getInfectionTypeByID(infectionID)].VALUE)
+				count++;
+		}
+	}
+	return count;
+}
+
+function countInfectedByValue(infectionValue) {
 	let count = 0;
 	for(let i = 0; i < LEN; i++) {
 		for(let j = 0; j < LEN; j++){
@@ -997,6 +1065,12 @@ function toogleDataSeries(e){
 	chart.render();
 }
 
+function getStripLineOpacity() {
+	if(currentScenario == 12)
+		return 1;
+	return 0;
+}
+
 function declareChart() {
 	chart = new CanvasJS.Chart("chartContainer", {
 		theme: "light2"
@@ -1015,7 +1089,16 @@ function declareChart() {
 		},
 		axisX: {
 			labelFontSize: 10,
-			includeZero: false
+			includeZero: false,
+			stripLines:[
+			{                
+				opacity:getStripLineOpacity(),
+				startValue:23,
+				endValue:25,              
+				color:"#F8BBD0"                
+			}
+			]    
+
 		},
 
 		legend:{
@@ -1111,7 +1194,7 @@ function updateChart() {
 		for(let i = 0; i < INFECTION.length; i++) {
 			INFECTION[i].dps.push({
 				x: CYCLE,
-				y: countInfectedByType(INFECTION[i].VALUE)
+				y: countInfectedByValue(INFECTION[i].VALUE)
 			});
 
 			if (INFECTION[i].dps.length > dataLength) {
