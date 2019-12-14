@@ -1,6 +1,6 @@
 "use strict";
 
-let currentScenario = 1;
+let currentScenario = 10;
 
 
 // States
@@ -141,9 +141,9 @@ let SCENES = [
 	},
 	// 10
 	function() {
-		loadScenario(51, 0.02, 100);
+		loadScenario(51, 0.02, 50);
 		// SIMPLE CHANGE OF INFECTION CHANCE
-		setInfectionValues(0, 0.15, 0.3, true, 0, 0.15, 0, 0);
+		setInfectionValues(0, 0.15, 0.5, true, 0, 0.15, 0, 0);
 
 		INFECTION[4].ENABLED = true;
 
@@ -152,11 +152,11 @@ let SCENES = [
 			if(CYCLE % 80 < 40) {
 				INFECTION[0].INFECTION_CHANCE += 0.02;
 				INFECTION[0].REINFECTION_CHANCE += 0.02;
-				INFECTION[0].SPAR += 0.01;
+				INFECTION[0].SPAR += 0.5;
 			}else{
 				INFECTION[0].INFECTION_CHANCE -= 0.02;
 				INFECTION[0].REINFECTION_CHANCE -= 0.02;
-				INFECTION[0].SPAR -= 0.01;
+				INFECTION[0].SPAR -= 0.5;
 			}
 			updateSliderValue();
 		}
@@ -228,12 +228,12 @@ let SCENES = [
 	},
 	// 13
 	function() {
-		loadScenario(50, 0.04, 5);
+		loadScenario(120, 0.04, 5);
 
-		setDegreeByRadius(25, 25, 15, 5);
-		setDegreeByRadius(25, 25, 7, 6);
-		setDegreeByRadius(25, 25, 3, 7);
-		setDegreeByRadius(25, 25, 1, 8);
+		// setDegreeByRadius(25, 25, 15, 5);
+		// setDegreeByRadius(25, 25, 7, 6);
+		// setDegreeByRadius(25, 25, 3, 7);
+		// setDegreeByRadius(25, 25, 1, 8);
 
 		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0, 0);
 		setInfectionValues(1, 0.5, 0, true, 0, 0.5, 0, 0);
@@ -247,25 +247,25 @@ let SCENES = [
 
 
 		cycleFunction = function() {
-			let maxCycle = 500
+			let maxCycle = 1000
 			let mod = CYCLE % maxCycle;
 			if(mod < maxCycle / 4 && mod >= 0){
-				MAIN[25][25] = INFECTION[0].VALUE;
+				MAIN[50][50] = INFECTION[0].VALUE;
 				INFECTION[0].POWER = 1.1;
 				INFECTION[3].POWER = 1;
 			}
 			if(mod < maxCycle / 2 && mod >= maxCycle / 4){
-				MAIN[25][25] = INFECTION[1].VALUE;
+				MAIN[50][50] = INFECTION[1].VALUE;
 				INFECTION[1].POWER = 1.1;
 				INFECTION[0].POWER = 1;
 			}
 			if(mod < maxCycle * 3 / 4 && mod >= maxCycle / 2){
-				MAIN[25][25] = INFECTION[2].VALUE;
+				MAIN[50][50] = INFECTION[2].VALUE;
 				INFECTION[2].POWER = 1.1;
 				INFECTION[1].POWER = 1;
 			}
 			if(mod < maxCycle && mod >= maxCycle * 3 / 4){
-				MAIN[25][25] = INFECTION[3].VALUE;
+				MAIN[50][50] = INFECTION[3].VALUE;
 				INFECTION[3].POWER = 1.1;
 				INFECTION[2].POWER = 1;
 			}
