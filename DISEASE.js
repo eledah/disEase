@@ -1,6 +1,6 @@
 "use strict";
 
-let currentScenario = 12;
+let currentScenario = 1;
 
 
 // States
