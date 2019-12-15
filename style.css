@@ -82,6 +82,10 @@ button:hover {
   cursor: pointer;
 }
 
+.desc {
+	text-align: left;
+}
+
 
 table {border:2px solid #424242; width: 500px; height: 500px;}
 td {border:0px solid #7986CB;text-align:center;}

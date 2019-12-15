@@ -1,6 +1,6 @@
 "use strict";
 
-let currentScenario = 10;
+let currentScenario = 3;
 
 
 // States
@@ -37,6 +37,8 @@ let timesInfected;
 let maxHeat = 0;
 let heatVision = false;
 
+let sceneDescription = "";
+
 let SCENES = [ 
 	// 0
 	// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
@@ -55,29 +57,37 @@ let SCENES = [
 	},
 	// 1
 	function () {
-		loadScenario(21, 0, 200);
-		setInfectionValues(0, 1, 0, true, 0, 1, 1, 0);
-		initialInfectWith(10, 10, INFECTION[0].VALUE);
+		loadScenario(11, 0, 200);
+		setInfectionValues(0, 1, 0, true, 0, 0, 1, 0);
+		initialInfectWith(5, 5, INFECTION[0].VALUE);
+		sceneDescription = "This is the simplest model possible. Each person is surrounded by four neighbours. (Except for those on the corners) Each round, the infected person will infect all his neighbours and then will die. <br>The closest example of this model in real life would be forest wildfires. Where everything burns down and fire is often spread in all directions."
 	},
 	// 2
 	function() {
 		loadScenario(21, 0, 150);
 		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0.5, 0);
 		initialInfectWith(10, 10, INFECTION[0].VALUE);
+		sceneDescription = "It's not commonplace for a disease -or even wildfire- to spread so flawlessly and kill everyone who catches it. In order to reach a more realistic model, we will use probabilities for many factors of any infectious entity. <br>1- The first factor would be 'Infection Chance'. The chance which decides if a neighbour gets infected, given the fact that their neighbours are infected. <br>2- The second factor is 'Re-Infection Chance'. Which decides that whether an infected person is going to be infected in the next round as well. <br>3- And finally, 'Death Chance'. Which decides the fate of individuals. <br>In this model, all three factors are set to 50%.";
 	},
 	// 3
 	function() {
-		loadScenario(21, 0.03, 50);
-		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0.5, 0);
+		loadScenario(31, 0.05, 100);
+		setInfectionValues(0, 0.75, 0, true, 0, 0.75, 0.1, 0);
 		INFECTION[4].ENABLED = true;
-		initialInfectWith(10, 10, INFECTION[0].VALUE);
+		initialInfectWith(Math.floor(Math.random() * LEN), Math.floor(Math.random() * LEN), INFECTION[0].VALUE);
+		fillWithInfection(0, 15, 30, 15, INFECTION[4].VALUE);
+		fillWithInfection(15, 0, 15, 30, INFECTION[4].VALUE);
+		sceneDescription = "For the next phase, we're adding 'Immune Cells' to the model as well. The light blue can be traslated into 'Quarantine areas'. These areas will contain the disease and stop it from spreading.<br>Each time you click 'Reset', a random person will be infected. And for each and every round, you will see that the disease is contained and the amount of surviving individuals -compared to last model- significantly increases.<be>Since this was a working method when it came to diseases and forest fires, some parents thoughts that they could do the same for their children. So they decided to protect them from outer sources of harm. But nowadays we all know that over-controlling parents will bring-up the most arrogant and disobidient childs. And children will find their way to the outer world. Why is that I wonder? The answer is one word: SPAR (Which is actually 3 words but we'll get to it";
+		document.getElementById("description").innerHTML = sceneDescription;
 	},
 	// 4
 	function() {
-		loadScenario(41, 0.03, 75);
-		setInfectionValues(0, 0.5, 0.5, true, 0, 0.5, 0, 0);
+		loadScenario(31, 0.05, 100);
+		setInfectionValues(0, 0.6, 0.2, true, 0, 0.6, 0, 0);
 		INFECTION[4].ENABLED = true;
-	},
+		fillWithInfection(0, 15, 30, 15, INFECTION[4].VALUE);
+		fillWithInfection(15, 0, 15, 30, INFECTION[4].VALUE);
+		sceneDescription = "Why do breaking news always find their way and find their voice during the harshest methods of censorship? How did the child with over-protective parents easily gained access to all those contents forbidden for him? Aside from 'The Internet' being the answer, all these events happen because another infection factor which is called SPAR. [SP]ontaneous [A]ctivation [R]ate decides whether a random infection is going to spawn or not. You can think of it as 'A Global Infection Rate' or 'A diseses that's in the air.<br>SPAR bypasses all quarantines and limitations. As long as the infection rate is high enough, SPAR will gurantee that everyone will know about the news/infection."
 	// 5
 	function() {
 		loadScenario(41, 0.01, 10);
