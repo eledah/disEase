@@ -88,6 +88,7 @@ let SCENES = [
 		fillWithInfection(0, 15, 30, 15, INFECTION[4].VALUE);
 		fillWithInfection(15, 0, 15, 30, INFECTION[4].VALUE);
 		sceneDescription = "Why do breaking news always find their way and find their voice during the harshest methods of censorship? How did the child with over-protective parents easily gained access to all those contents forbidden for him? Aside from 'The Internet' being the answer, all these events happen because another infection factor which is called SPAR. [SP]ontaneous [A]ctivation [R]ate decides whether a random infection is going to spawn or not. You can think of it as 'A Global Infection Rate' or 'A diseses that's in the air.<br>SPAR bypasses all quarantines and limitations. As long as the infection rate is high enough, SPAR will gurantee that everyone will know about the news/infection."
+	}
 	// 5
 	function() {
 		loadScenario(41, 0.01, 10);
