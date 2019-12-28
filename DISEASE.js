@@ -1,6 +1,6 @@
 "use strict";
 
-let currentScenario = 3;
+let currentScenario = 1;
 
 
 // States
@@ -43,31 +43,69 @@ let SCENES = [
 	// 0
 	// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
 	function() {
-		loadScenario(21, 0, 100);
-		setInfectionValues(0, 0.3, 0, true, 0, 0.3, 0, 0);
-		initialInfectWith(5, 5, INFECTION[0].VALUE);
+		loadScenario(50, 0.01, 1);
 
-		fillWithInfection(0, 10, 20, 10, INFECTION[4].VALUE);
-		fillWithInfection(10, 0, 10, 20, INFECTION[4].VALUE);
-		initialInfectWith(0, 10, SUS);
-		initialInfectWith(10, 0, SUS);
-		initialInfectWith(20, 10, SUS);
-		initialInfectWith(10, 20, SUS);
-			
+		setInfectionValues(0, 0.2, 2, true, 0, 0.2, 0, 0.00010);
+		setInfectionValues(1, 0.2, 2, true, 0, 0.2, 0, 0.00005);
+		setInfectionValues(2, 0.2, 2, true, 0, 0.2, 0, 0.00001);
+
+		INFECTION[4].ENABLED = true;
+		INFECTION[4].SPAR = 0.02;
+		INFECTION[4].INFECTION_CHANCE = 0.5;
+
+		let changeValue = 0.012;
+		let bottomInfection = 0;
+		cycleFunction = function() {
+			if(CYCLE % 150 < 75) {
+				if(INFECTION[0].INFECTION_CHANCE > changeValue && INFECTION[0].INFECTION_CHANCE > (bottomInfection + changeValue)) {
+					INFECTION[0].INFECTION_CHANCE -= changeValue;
+					INFECTION[0].REINFECTION_CHANCE -= changeValue;
+				}
+			} else {
+				INFECTION[0].INFECTION_CHANCE += changeValue;
+				INFECTION[0].REINFECTION_CHANCE += changeValue;
+			}
+			if((CYCLE + 50) % 150 < 75) {
+				if(INFECTION[1].INFECTION_CHANCE > changeValue && INFECTION[1].INFECTION_CHANCE > (bottomInfection + changeValue)) {
+					INFECTION[1].INFECTION_CHANCE -= changeValue;
+					INFECTION[1].REINFECTION_CHANCE -= changeValue;
+				}
+			} else {
+				INFECTION[1].INFECTION_CHANCE += changeValue;
+				INFECTION[1].REINFECTION_CHANCE += changeValue;
+			}
+			if((CYCLE + 100) % 150 < 75) {
+				if(INFECTION[2].INFECTION_CHANCE > changeValue && INFECTION[2].INFECTION_CHANCE > (bottomInfection + changeValue)) {
+					INFECTION[2].INFECTION_CHANCE -= changeValue;
+					INFECTION[2].REINFECTION_CHANCE -= changeValue;
+				}
+			} else 	{
+				INFECTION[2].INFECTION_CHANCE += changeValue;
+				INFECTION[2].REINFECTION_CHANCE += changeValue;
+			}
+			// console.log(INFECTION[0].INFECTION_CHANCE + " " + INFECTION[1].INFECTION_CHANCE);
+			updateSliderValue();
+		}
 	},
 	// 1
 	function () {
 		loadScenario(11, 0, 200);
 		setInfectionValues(0, 1, 0, true, 0, 0, 1, 0);
 		initialInfectWith(5, 5, INFECTION[0].VALUE);
-		sceneDescription = "This is the simplest model possible. Each person is surrounded by four neighbours. (Except for those on the corners) Each round, the infected person will infect all his neighbours and then will die. <br>The closest example of this model in real life would be forest wildfires. Where everything burns down and fire is often spread in all directions."
+		sceneDescription = "This is the simplest model possible. Each person is surrounded by four neighbours. (Except for those on the corners)"
+		+ " Each round, the infected person will infect all his neighbours and then will die."
+		+ "<br>" + "The closest example of this model in real life would be forest wildfires. Where everything burns down and fire is often spread in all directions.";
 	},
 	// 2
 	function() {
 		loadScenario(21, 0, 150);
 		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0.5, 0);
 		initialInfectWith(10, 10, INFECTION[0].VALUE);
-		sceneDescription = "It's not commonplace for a disease -or even wildfire- to spread so flawlessly and kill everyone who catches it. In order to reach a more realistic model, we will use probabilities for many factors of any infectious entity. <br>1- The first factor would be 'Infection Chance'. The chance which decides if a neighbour gets infected, given the fact that their neighbours are infected. <br>2- The second factor is 'Re-Infection Chance'. Which decides that whether an infected person is going to be infected in the next round as well. <br>3- And finally, 'Death Chance'. Which decides the fate of individuals. <br>In this model, all three factors are set to 50%.";
+		sceneDescription = "It's not commonplace for a disease -or even wildfire- to spread so flawlessly and kill/burn everyone who catches it."
+		+ " In order to reach a more realistic model, we will use probabilities for many factors of any infectious entity."
+		+ "<br>" + "1- The first factor would be 'Infection Chance'. The chance which decides if a neighbour gets infected, given the fact that their neighbours are infected."
+		+ "<br>" + "2- The second factor is 'Re-Infection Chance'. Which decides that whether an infected person is going to be infected in the next round as well."
+		+ "<br>" + "3- And finally, 'Death Chance'. Which decides the fate of individuals. <br>In this model, all three factors are set to 50%.";
 	},
 	// 3
 	function() {
@@ -77,88 +115,49 @@ let SCENES = [
 		initialInfectWith(Math.floor(Math.random() * LEN), Math.floor(Math.random() * LEN), INFECTION[0].VALUE);
 		fillWithInfection(0, 15, 30, 15, INFECTION[4].VALUE);
 		fillWithInfection(15, 0, 15, 30, INFECTION[4].VALUE);
-		sceneDescription = "For the next phase, we're adding 'Immune Cells' to the model as well. The light blue can be traslated into 'Quarantine areas'. These areas will contain the disease and stop it from spreading.<br>Each time you click 'Reset', a random person will be infected. And for each and every round, you will see that the disease is contained and the amount of surviving individuals -compared to last model- significantly increases.<be>Since this was a working method when it came to diseases and forest fires, some parents thoughts that they could do the same for their children. So they decided to protect them from outer sources of harm. But nowadays we all know that over-controlling parents will bring-up the most arrogant and disobidient childs. And children will find their way to the outer world. Why is that I wonder? The answer is one word: SPAR (Which is actually 3 words but we'll get to it";
-		document.getElementById("description").innerHTML = sceneDescription;
+		sceneDescription = "For the next phase, we're adding 'Immune Cells' to the model as well. The light blue can be traslated into 'Quarantine areas'."
+		+ " These areas will contain the disease and stop it from spreading."
+		+ "<br>" + "Each time you click 'Reset', a random person will be infected."
+		+ " And for each and every round, you will see that the disease is contained and the amount of surviving individuals -compared to last model- significantly increases."
+		+ "<br>" + "Since this was a working method when it came to diseases and forest fires, some parents thoughts that they could do the same for their children."
+		+ " So they decided to protect them from outer sources of harm. But nowadays we all know that over-controlling parents will bring-up the most arrogant and disobidient childs."
+		+ " And children will find their way to the outer world."
+		+ "<br>" + "Why is that I wonder? The answer is one word: SPAR (Which is actually 3 words but we'll get to it)";
 	},
 	// 4
 	function() {
-		loadScenario(31, 0.05, 100);
-		setInfectionValues(0, 0.6, 0.2, true, 0, 0.6, 0, 0);
+		loadScenario(31, 0.02, 100);
+		setInfectionValues(0, 0.4, 0.2, true, 0, 0.6, 0, 0);
 		INFECTION[4].ENABLED = true;
-		fillWithInfection(0, 15, 30, 15, INFECTION[4].VALUE);
-		fillWithInfection(15, 0, 15, 30, INFECTION[4].VALUE);
-		sceneDescription = "Why do breaking news always find their way and find their voice during the harshest methods of censorship? How did the child with over-protective parents easily gained access to all those contents forbidden for him? Aside from 'The Internet' being the answer, all these events happen because another infection factor which is called SPAR. [SP]ontaneous [A]ctivation [R]ate decides whether a random infection is going to spawn or not. You can think of it as 'A Global Infection Rate' or 'A diseses that's in the air.<br>SPAR bypasses all quarantines and limitations. As long as the infection rate is high enough, SPAR will gurantee that everyone will know about the news/infection."
+		fillWithInfection(10, 10, 20, 20, INFECTION[4].VALUE);
+		fillWithInfection(12, 12, 18, 18, 0);
+		sceneDescription = "Why do breaking news always find their way andfind their voice during the harshest methods of censorship?"
+		+ " How did the child with over-protective parents easily gained access to all those contents forbidden for him?"
+		+ " Aside from 'The Internet' being the answer, all these events happen because another infection factor which is called SPAR."
+		+ "<br>" + "[SP]ontaneous [A]ctivation [R]ate decides whether a random infection is going to spawn or not. You can think of it as 'A Global Infection Rate' or 'A diseses that's in the air."
+		+ "<br>" + "SPAR bypasses all quarantines and limitations. As long as the infection rate is high enough, SPAR will gurantee that everyone will know about the news/infection.";
 	},
 	// 5
 	function() {
-		loadScenario(41, 0.01, 10);
-		setInfectionValues(0, 0.4, 0, true, 0, 0.4, 0, 0);
-		setInfectionByRadius(20, 20, 4, INFECTION[0].VALUE);
+		loadScenario(71, 0.01, 10);
+		setInfectionValues(0, 0.4, 30, true, 0, 0.3, 0, 0);
+		setInfectionValues(2, 0.5, 0, true, 0, 0.5, 0, 0);
+		setInfectionByRadius(50, 50, 3, INFECTION[0].VALUE);
+		setInfectionByRadius(20, 50, 3, INFECTION[0].VALUE);
+		setInfectionByRadius(50, 20, 3, INFECTION[0].VALUE);
+		setInfectionByRadius(20, 20, 3, INFECTION[2].VALUE);
+		sceneDescription = "Let's do a little bit of experimentation. Here we have got 2 different diseases."
+		+ "<br>" + "The 'RED' disease has a high SPAR and a low infection rate. Meaning that most of the news outlets are talking about it. But people really don't -and shouldn't- care about it."
+		+ "<br>" + "The 'GREEN' disease, on the other hand, has got a low SPAR and a high infection. Meaning that it is rather important but highly overlooked."
+		+ "<br>" + "Press 'Start' and see the results for yourself!<br>What happens is that the RED news will first overtake the community."
+		+ " But overtime and in the long term, it's the GREEN disease that takes over. In reality and with the current circumstances,"
+		+ "<br>" + "'Long Term' doesn't really happen. Why? Becuase the the SPAR and Infection Rate are everchanging.";
 	},
 	// 6
 	function() {
-		loadScenario(81, 0.01, 50);
-		setInfectionValues(0, 0.3, 0, true, 0, 0.3, 0, 0);
-
-		INFECTION[4].ENABLED = true;
-
-		setInfectionByRadius(40, 40, 5, INFECTION[0].VALUE);
-
-		setDegreeByRadius(80, 80, 20, 5);
-		setDegreeByRadius(80, 80, 15, 6);
-		setDegreeByRadius(80, 80, 10, 7);
-		setDegreeByRadius(80, 80, 5, 8);
-	},
-	// 7
-	function() {
-		loadScenario(51, 0.001, 10);
-
-		setInfectionValues(0, 0.27, 0.2, true, 0, 0.27, 0, 0);
-
-		setInfectionByRadius(2, 2, 2, INFECTION[0].VALUE);
-		setDegreeByRadius(25, 25, 10, 5);
-		setDegreeByRadius(25, 25, 9, 6);
-		setDegreeByRadius(25, 25, 7, 7);
-		setDegreeByRadius(25, 25, 5, 8);
-	},
-	// 8
-	function() {
-		loadScenario(51, 0.1, 50);
-
-		setInfectionValues(0, 0.7, 0, true, 0, 0.7, 0, 0);
-		setInfectionValues(1, 0.6, 0, true, 0, 0.6, 0, 0);
-		setInfectionValues(2, 0.5, 0, true, 0, 0.5, 0, 0);
-		setInfectionValues(3, 0.4, 0, true, 0, 0.4, 0, 0);
-
-		INFECTION[4].ENABLED = true;
-
-		setInfectionByRadius(10, 10, 3, INFECTION[0].VALUE);
-		setInfectionByRadius(40, 10, 3, INFECTION[1].VALUE);
-		setInfectionByRadius(10, 40, 3, INFECTION[2].VALUE);
-		setInfectionByRadius(40, 40, 3, INFECTION[3].VALUE);
-
-	},
-	// 9
-	function() {
-		loadScenario(51, 0.2, 100);
-
-		setInfectionValues(0, 0.5, 5.1, true, 0, 0.5, 0, 0);
-		setInfectionValues(1, 0.7, 0.01, true, 0, 0.7, 0, 0);
-
-		INFECTION[4].ENABLED = true;
-
-		setInfectionByRadius(10, 10, 3, INFECTION[0].VALUE);
-		setInfectionByRadius(40, 40, 2, INFECTION[1].VALUE);
-	},
-	// 10
-	function() {
 		loadScenario(51, 0.02, 50);
-		// SIMPLE CHANGE OF INFECTION CHANCE
 		setInfectionValues(0, 0.15, 0.5, true, 0, 0.15, 0, 0);
 
-		INFECTION[4].ENABLED = true;
-
-		// setInfectionByRadius(10, 10, 3, INFECTION[0].VALUE);
 		cycleFunction = function() {
 			if(CYCLE % 80 < 40) {
 				INFECTION[0].INFECTION_CHANCE += 0.02;
@@ -171,15 +170,56 @@ let SCENES = [
 			}
 			updateSliderValue();
 		}
+		sceneDescription = "After reviewing 5 different scenarios, this is where the complications really begin to show."
+		+ "<br>" + "As the name suggests, 'News' is all about 'New' occurings. No-one gives a damn about old news."
+		+ " Why would they? The point I'm trying to make is that each and every news, gas a life cycle and we're trying to model that right over here."
+		+ "<br>" + "For each news, there are 3 different phases (Some say it's 5 but let's go with 3 for now):"
+		+ "<br>" + "1- When nobody knows about it and it's about to go mainstream."
+		+ "<br>" + "2- When it's mainstream and almost everyone knows about it."
+		+ "<br>" + "3- When the slowpokes and those living under the rocks find out about it."
+		+ "<br>" + "In order to model these three phases, we increase -and decrease- the infection values on a linear basis."
+		+ " Each cycle, the infection rate is changed by 0.02 (depending on whether it's going up or down) and SPAR is changed by 0.1."
+		+ "<br>" + "Press start and see the results for yourself."
 	},
-	// 11
+	// 7
+	function() {
+		loadScenario(71, 0, 50);
+		setInfectionValues(0, 0.7, 40, true, 0, 0.5, 0, 0);
+		setInfectionValues(2, 0.8, 0.3, true, 0, 0.5, 0, 0);
+
+		setInfectionByRadius(50, 50, 3, INFECTION[0].VALUE);
+		setInfectionByRadius(20, 50, 3, INFECTION[0].VALUE);
+		setInfectionByRadius(50, 20, 3, INFECTION[0].VALUE);
+		setInfectionByRadius(20, 20, 3, INFECTION[2].VALUE);
+
+		cycleFunction = function() {
+			INFECTION[0].INFECTION_CHANCE -= 0.01;
+			INFECTION[0].REINFECTION_CHANCE -= 0.01;
+
+			INFECTION[2].INFECTION_CHANCE -= 0.01;
+			INFECTION[2].REINFECTION_CHANCE -= 0.01;
+			if(INFECTION[0].INFECTION_CHANCE < 0) {
+				clearInterval(cancelCode);
+				INFECTION[0].INFECTION_CHANCE = 0;
+			}
+
+			updateSliderValue();
+		}
+		sceneDescription = "In the future, everyone will be world-famous for 15 minutes."
+		+ "<br>" + "-Andy Warhol, 1968."
+		+ "<br>" + "Remember the model with RED and GREEN disease? Now we are going change their variables."
+		+ " Since no matter how loud you shout something, people will eventually get bored of the same news and move on."
+		+ "<br>" + "By increasing and decreasing the infection chances, we're creating a life cycle for each news."
+		+ "<br>" + "Press Start, play around and see which news is getting to more people during its life cycle."
+		+ "<br>" + "Obviously, the news with more outlets and louder shouts will have more listeners."
+		+ " The problem is that the idea of 'Democracy' wouldn't mean much under these circumstances. Since those with the money and power will control the media, and therefore the people's ideas."
+		+ "<br>" + "If our beliefs and biases are following those of the medias', then the concept of 'Individuality' and 'Freedom' is nothing but a joke to laugh at."
+		+ " As intelligent human beings, we should not let media outlets -and generally speaking, outside memes (Even this webpage(!))- define 'Right' or 'Wrong' for us.";
+	},
+	// 8
 	function() {
 		loadScenario(50, 0.01, 10);
 		// SIMPLE CHANGE OF INFECTION CHANCE
-		// I would like to focus on a very special cell in this entire table.
-		// We are all controlled by the media that we consume and the people around us.
-		// If I'm being controlled all the time, then is there any "me" left in this body? What's the point of living if "Me" doesn't exist anymore?
-		// And when you have broken out of the consumption cycle, you will realize that there's a world out there that needs fixing.
 
 		// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE)
 		setInfectionValues(0, 0.2, 2, true, 0, 0.2, 0, 0.00010);
@@ -220,67 +260,159 @@ let SCENES = [
 				INFECTION[2].INFECTION_CHANCE += changeValue;
 				INFECTION[2].REINFECTION_CHANCE += changeValue;
 			}
-			// console.log(INFECTION[0].INFECTION_CHANCE + " " + INFECTION[1].INFECTION_CHANCE);
 			updateSliderValue();
 		}
+		sceneDescription = "The internet and its light-speed methods made it possible for news outlets to publish news stories without any delay."
+		+ " More than ever, we are exposed to different news from all over the world."
+		+ " And for whatever reason, whenever I check my news feed, it's filled to the brim with death, fraud, kidnapping and other types of 'Bad News'."
+		+ " It's as if nobody cares about 'Good News' and we're all here to experience and talk about misery."
+		+ "<br>" + "Bad news after bad news, it infects us all with despair and hopelessness."
+		+ "<br>" + "<br>" + "I wanted to model this overflow of news to fully understand how it affects us and how to deal with it."
+		+ "<br>" + "So in this scenario, different diseases grow and fall with a fixed frequency (depending on the cycle number)."
+		+ " As the code runs, you might want to look at the orange graph line, which indicates 'The Average Infected People Until Now'."
+		+ "<br>" + "<br>" + "If you have let the code run long enough, you will see that more than 50% of people (nearly 60%) are always 'Sick' or 'Depressed' or 'Hopleless'."
+		+ " Why, because they let themselves to be taken by these news waves every single time. How does one break out of this mundane everyday cycle? idk I haven't wrote that part yet."
+	},
+	// 9
+	function() {
+		loadScenario(51, 0.2, 100);
+
+		setInfectionValues(0, 0.5, 5.1, true, 0, 0.5, 0, 0);
+		setInfectionValues(1, 0.7, 0.01, true, 0, 0.7, 0, 0);
+
+		INFECTION[4].ENABLED = true;
+
+		setInfectionByRadius(10, 10, 3, INFECTION[0].VALUE);
+		setInfectionByRadius(40, 40, 2, INFECTION[1].VALUE);
+		sceneDescription = "This section is incomplete.";
+	},
+	// 10
+	function() {
+		loadScenario(51, 0.02, 50);
+		// // SIMPLE CHANGE OF INFECTION CHANCE
+		// setInfectionValues(0, 0.15, 0.5, true, 0, 0.15, 0, 0);
+
+		// INFECTION[4].ENABLED = true;
+
+		// // setInfectionByRadius(10, 10, 3, INFECTION[0].VALUE);
+		// cycleFunction = function() {
+		// 	if(CYCLE % 80 < 40) {
+		// 		INFECTION[0].INFECTION_CHANCE += 0.02;
+		// 		INFECTION[0].REINFECTION_CHANCE += 0.02;
+		// 		INFECTION[0].SPAR += 0.5;
+		// 	}else{
+		// 		INFECTION[0].INFECTION_CHANCE -= 0.02;
+		// 		INFECTION[0].REINFECTION_CHANCE -= 0.02;
+		// 		INFECTION[0].SPAR -= 0.5;
+		// 	}
+		// 	updateSliderValue();
+		// }
+	},
+	// 11
+	function() {
+		loadScenario(50, 0.01, 10);
+		// // SIMPLE CHANGE OF INFECTION CHANCE
+
+		// // function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE)
+		// setInfectionValues(0, 0.2, 2, true, 0, 0.2, 0, 0.00010);
+		// setInfectionValues(1, 0.2, 2, true, 0, 0.2, 0, 0.00005);
+		// setInfectionValues(2, 0.2, 2, true, 0, 0.2, 0, 0.00001);
+
+		// INFECTION[4].ENABLED = true;
+		// INFECTION[4].SPAR = 0.002;
+		// INFECTION[4].INFECTION_CHANCE = 0;
+
+		// let changeValue = 0.012;
+		// let bottomInfection = 0;
+		// cycleFunction = function() {
+		// 	if(CYCLE % 150 < 75) {
+		// 		if(INFECTION[0].INFECTION_CHANCE > changeValue && INFECTION[0].INFECTION_CHANCE > (bottomInfection + changeValue)) {
+		// 			INFECTION[0].INFECTION_CHANCE -= changeValue;
+		// 			INFECTION[0].REINFECTION_CHANCE -= changeValue;
+		// 		}
+		// 	} else {
+		// 		INFECTION[0].INFECTION_CHANCE += changeValue;
+		// 		INFECTION[0].REINFECTION_CHANCE += changeValue;
+		// 	}
+		// 	if((CYCLE + 50) % 150 < 75) {
+		// 		if(INFECTION[1].INFECTION_CHANCE > changeValue && INFECTION[1].INFECTION_CHANCE > (bottomInfection + changeValue)) {
+		// 			INFECTION[1].INFECTION_CHANCE -= changeValue;
+		// 			INFECTION[1].REINFECTION_CHANCE -= changeValue;
+		// 		}
+		// 	} else {
+		// 		INFECTION[1].INFECTION_CHANCE += changeValue;
+		// 		INFECTION[1].REINFECTION_CHANCE += changeValue;
+		// 	}
+		// 	if((CYCLE + 100) % 150 < 75) {
+		// 		if(INFECTION[2].INFECTION_CHANCE > changeValue && INFECTION[2].INFECTION_CHANCE > (bottomInfection + changeValue)) {
+		// 			INFECTION[2].INFECTION_CHANCE -= changeValue;
+		// 			INFECTION[2].REINFECTION_CHANCE -= changeValue;
+		// 		}
+		// 	} else 	{
+		// 		INFECTION[2].INFECTION_CHANCE += changeValue;
+		// 		INFECTION[2].REINFECTION_CHANCE += changeValue;
+		// 	}
+		// 	// console.log(INFECTION[0].INFECTION_CHANCE + " " + INFECTION[1].INFECTION_CHANCE);
+		// 	updateSliderValue();
+		// }
 	},
 	// 12
 	function() {
-		loadScenario(35, 0.01, 10);
-		setInfectionValues(0, 0.4, 10, true, 0, 0.2, 0.5, 0);
-		setInfectionValues(2, 1, 2, false, 0, 0.2, 1, 0);
-		cycleFunction = function() {
-			if(CYCLE == 24) {
-				INFECTION[2].ENABLED = true;
-				setInfectionByRadius(30, 30, 3, INFECTION[2].VALUE)
-				cycleFunction = function(){};
-			}
-		}
+		// loadScenario(35, 0.01, 10);
+		// setInfectionValues(0, 0.4, 10, true, 0, 0.2, 0.5, 0);
+		// setInfectionValues(2, 1, 2, false, 0, 0.2, 1, 0);
+		// cycleFunction = function() {
+		// 	if(CYCLE == 24) {
+		// 		INFECTION[2].ENABLED = true;
+		// 		setInfectionByRadius(30, 30, 3, INFECTION[2].VALUE)
+		// 		cycleFunction = function(){};
+		// 	}
+		// }
 	},
 	// 13
 	function() {
-		loadScenario(120, 0.04, 5);
+		// loadScenario(120, 0.04, 5);
 
-		// setDegreeByRadius(25, 25, 15, 5);
-		// setDegreeByRadius(25, 25, 7, 6);
-		// setDegreeByRadius(25, 25, 3, 7);
-		// setDegreeByRadius(25, 25, 1, 8);
+		// // setDegreeByRadius(25, 25, 15, 5);
+		// // setDegreeByRadius(25, 25, 7, 6);
+		// // setDegreeByRadius(25, 25, 3, 7);
+		// // setDegreeByRadius(25, 25, 1, 8);
 
-		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0, 0);
-		setInfectionValues(1, 0.5, 0, true, 0, 0.5, 0, 0);
-		setInfectionValues(2, 0.5, 0, true, 0, 0.5, 0, 0);
-		setInfectionValues(3, 0.5, 0, true, 0, 0.5, 0, 0);
+		// setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0, 0);
+		// setInfectionValues(1, 0.5, 0, true, 0, 0.5, 0, 0);
+		// setInfectionValues(2, 0.5, 0, true, 0, 0.5, 0, 0);
+		// setInfectionValues(3, 0.5, 0, true, 0, 0.5, 0, 0);
 		
-		INFECTION[0].POWER = 1;
-		INFECTION[1].POWER = 1;
-		INFECTION[2].POWER = 1;
-		INFECTION[3].POWER = 1;
+		// INFECTION[0].POWER = 1;
+		// INFECTION[1].POWER = 1;
+		// INFECTION[2].POWER = 1;
+		// INFECTION[3].POWER = 1;
 
 
-		cycleFunction = function() {
-			let maxCycle = 1000
-			let mod = CYCLE % maxCycle;
-			if(mod < maxCycle / 4 && mod >= 0){
-				MAIN[50][50] = INFECTION[0].VALUE;
-				INFECTION[0].POWER = 1.1;
-				INFECTION[3].POWER = 1;
-			}
-			if(mod < maxCycle / 2 && mod >= maxCycle / 4){
-				MAIN[50][50] = INFECTION[1].VALUE;
-				INFECTION[1].POWER = 1.1;
-				INFECTION[0].POWER = 1;
-			}
-			if(mod < maxCycle * 3 / 4 && mod >= maxCycle / 2){
-				MAIN[50][50] = INFECTION[2].VALUE;
-				INFECTION[2].POWER = 1.1;
-				INFECTION[1].POWER = 1;
-			}
-			if(mod < maxCycle && mod >= maxCycle * 3 / 4){
-				MAIN[50][50] = INFECTION[3].VALUE;
-				INFECTION[3].POWER = 1.1;
-				INFECTION[2].POWER = 1;
-			}
-		}
+		// cycleFunction = function() {
+		// 	let maxCycle = 1000
+		// 	let mod = CYCLE % maxCycle;
+		// 	if(mod < maxCycle / 4 && mod >= 0){
+		// 		MAIN[50][50] = INFECTION[0].VALUE;
+		// 		INFECTION[0].POWER = 1.1;
+		// 		INFECTION[3].POWER = 1;
+		// 	}
+		// 	if(mod < maxCycle / 2 && mod >= maxCycle / 4){
+		// 		MAIN[50][50] = INFECTION[1].VALUE;
+		// 		INFECTION[1].POWER = 1.1;
+		// 		INFECTION[0].POWER = 1;
+		// 	}
+		// 	if(mod < maxCycle * 3 / 4 && mod >= maxCycle / 2){
+		// 		MAIN[50][50] = INFECTION[2].VALUE;
+		// 		INFECTION[2].POWER = 1.1;
+		// 		INFECTION[1].POWER = 1;
+		// 	}
+		// 	if(mod < maxCycle && mod >= maxCycle * 3 / 4){
+		// 		MAIN[50][50] = INFECTION[3].VALUE;
+		// 		INFECTION[3].POWER = 1.1;
+		// 		INFECTION[2].POWER = 1;
+		// 	}
+		// }
 	}
 ]
 
@@ -1299,6 +1431,7 @@ function loadScene(sceneCode){
 	createTable();
 	drawTable();
 	document.getElementById("SCENARIO").innerHTML = "Scenario: " + sceneCode;
+	document.getElementById("description").innerHTML = sceneDescription;
 	updateSliderValue();
 	declareChart();
 }
