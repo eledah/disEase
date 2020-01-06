@@ -1,76 +1,226 @@
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="style.css">
+<!-- 		<link rel="stylesheet" type="text/css" href="style.css"> -->
+		<style>
+			.parent {
+				display: flex;
+				width: 90%;
+				height: 100%;
+				justify-content: center;
+				flex-direction: row;
+				flex-wrap: wrap;
+				align-items: flex-start;
+				align-content: flex-start;
+				margin: auto;
+				margin-top: 1%;
+			}
+
+			.container {
+				display: flex;
+				width: 100%;
+				justify-content: left;
+				flex-direction: row;
+				flex-wrap: wrap;
+				align-items: flex-start;
+				align-content: flex-start;
+				margin: auto;
+				margin-top: 1%;
+			}
+
+			#titleContainer {
+				height: 10%;
+				margin-top: 0;
+				justify-content: left;
+			}
+
+			#descContainer {
+				justify-content: left;
+				margin-top: 0;
+			}
+			
+			#container3 {
+				height: 5%;
+				justify-content: left;
+			}
+
+			#container4 {
+				height: 50%;
+				justify-content: left;
+			}
+
+			#scenarioTitle {
+				margin: 0.5%;
+				margin-top: 2%;
+			}
+
+			#buttons1 {
+				margin-top: 0;
+				margin-bottom: 0.5%;
+				margin-right: 0.5%;
+				margin-left: 0.5%;
+			}
+
+			#buttons2 {
+				margin-top: 0;
+				margin-bottom: 0.5%;
+				margin-right: 0.5%;
+				margin-left: 0.5%;
+			}
+
+			#chartsContainer {
+				margin: 0.5%;
+			}
+
+			div {
+/*				-webkit-box-shadow:inset 0px 0px 0px 0.3px #FFF;
+			    -moz-box-shadow:inset 0px 0px 0px 0.3px #FFF;
+			    box-shadow:inset 0px 0px 0px 0.3px #FFF;*/
+			}
+
+
+			@font-face {
+				font-family: Prototype;
+				src: url('Prototype.ttf');
+			}
+			
+			@font-face {
+				font-family: TypoGraphica;
+				src: url('TypoGraphica.otf');
+			}
+
+			#scenarioName {
+				font-family: TypoGraphica, sans-serif;
+				font-size: 40px;
+				color: #fa1e4e;
+				vertical-align: bottom;
+				transition-duration: 0.2s;
+			}
+
+			#scenarioName:hover {
+				text-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+				transition-duration: 0.2s;
+			}
+/*
+			@font-face {
+			}*/
+
+			.scenarioDesc {
+				font-family: Prototype;
+				font-size: 17px;
+				line-height: 25px;
+				color: #AAA;
+				vertical-align: top;
+				transition-duration: 0.2s;
+			}
+
+			.scenarioDesc:hover {
+				color: #CCC;
+				transition-duration: 0.2s;
+			}
+
+
+			#scenarioButton {
+				height: 100%;
+				width: 35%;
+				background-color: #c8042f;
+				border: none;
+				border-radius: 2px;
+				color: #CCC;
+				font-size: 12px;
+				transition-duration: 0.4s;
+				text-align: center;
+				font-family: Prototype;
+				padding: 7px;
+			}
+
+			#scenarioButton:hover {
+				background-color: #fa1e4e;
+				transition-duration: 0.4s;
+			}
+
+			#actionButton {
+				height: 100%;
+				width: 10%;
+				background-color: #c8042f;
+				border: none;
+				border-radius: 2px;
+				color: #CCC;
+				font-size: 12px;
+				transition-duration: 0.4s;
+				text-align: center;
+				font-family: Prototype;
+				padding: 7px;
+			}
+
+			#actionButton:hover {
+				background-color: #fa1e4e;
+				transition-duration: 0.4s;
+			}
+
+			#chartContainer {
+				margin: 0.5%;
+			}
+
+			#maintable {
+				border: 1px solid #AAA;
+				border-collapse:collapse;
+				width: 100%;
+				height: 100%;
+			}
+
+			td {
+			}
+
+			tr {
+
+			}
+			
+		</style>
 	</head>
 
-	<body>
-		<div id = "maintbl">
-			<div id = "div1">
-				<div style="margin-left: 10px;">
-					<table id = 'mainTABLE'> </table>
-					<div id = "div2">
-						<form action="#" method="post" class="demoForm" id="demoForm">
-
-							<p>
-								<button type="button" name="getVal" onclick="previousScenario()"><</button> 
-								<button type="button" name="getVal" onclick="INITIALIZE()">GO</button>
-								<button type="button" name="getVal" onclick="RESET()">RESET</button>
-								<button type="button" name="getVal" onclick="STEP()">STEP</button> 
-								<button type="button" name="getVal" onclick="toggleHeatVision()">HEAT</button> 
-								<button type="button" name="getVal" onclick="nextScenario()">></button> 
-							</p>
-
-							<p id="SCENARIO">1</p>						
-
-							
-							<p class ="slidercontainer">
-								<!-- INFECTION CHANCE -->
-								<input type="range" class="slider" min="0" max="100" value="50" step="1" class="slider" id="infectionCHANCE" onchange="updateChances()"> <br>
-								<lable id = "infLable"> INF.C </lable> <br>
-								<!-- IMMUNITY CHANCE -->
-								<input type="range" class="slider" min="0" max="100" value="50" step="1" class="slider" id="immunityCHANCE" onchange="updateChances()"> <br>
-								<lable id = "immLable"> IMM.C </lable> <br>
-								<!-- SPAR -->
-								<input type="range" class="slider" min="0" max="2000" value="50" step="1" class="slider" id="spAR" onchange="updateChances()"> <br>
-								<lable id = "spARLable"> SP.A.R </lable> <br>
-							</p>
-							
-						</form>
-					</div>
-				</div>
-				<div class = "rightside">
-					<div class="chart" id="chartContainer" style="height: 70%; width: 100%;"></div> <br>
-					<div class="dataContainer" style="background-color: #FFFFFF; height: 20%; width: 100%;">
-						<table id="dataTable" style="width: 100%; height: 100%;">
-							<tr>
-								<td class="datatd">Healthy People:</td>
-								<td class="datatd">?</td>
-							</tr>
-
-							<tr>
-								<td class="datatd">Infected People:</td>
-								<td class="datatd">?</td>
-							</tr>
-							
-							<tr>
-								<td class="datatd">Avg. Infected</td>
-								<td class="datatd">?</td>
-							</tr>
-							
-							<tr>
-								<td class="datatd">Dead People</td>
-								<td class="datatd">?</td>
-							</tr>
-
-						</table>
-					</div>
-				</div>
+	<body style="background-color:#040404" class="parent">
+		<div class="container" id="titleContainer">
+			<div id="scenarioTitle" style="height: 100%;">
+				<span id='scenarioName'> &#8805;  Scenario Name</span>
 			</div>
 		</div>
 
-		<p id="description" class="desc"></p>
+		<div class="container" id="descContainer">
+			<div style="margin:0.5%; height: 100%;">
+				<span class="scenarioDesc" id="description"> 
+					Bruh Momento Numero Dos (2)
+				</span>
+			</div>
+		</div>	
+
+
+		<div class="container" id="container3">
+			<div id="buttons1" style="width: 30%; height: 100%;">
+				<button id="scenarioButton" type="button" name="getVal" onclick="previousScenario()">&lt; Previous Scenario</button> 
+				<button id="scenarioButton" type="button" name="getVal" onclick="nextScenario()">Next Scenario &gt;</button> 
+			</div>
+
+			<div id="buttons1" style=" width: 68%; height: 100%">
+				<button id="actionButton" name="getVal" onclick="INITIALIZE()">.GO</button>
+				<button id="actionButton" name="getVal" onclick="RESET()">.RESET</button>
+				<button id="actionButton" name="getVal" onclick="STEP()">.STEP</button> 
+				<button id="actionButton" name="getVal" onclick="toggleHeatVision()">.HEAT</button> 
+			</div>
+		</div>
+
+
+		<div class="container" id="container4">
+			<div id="chartsContainer" style="width: 30%;">
+				<div style="width: 100% height: 100%; border:2px solid #333;"><table id = 'mainTABLE'> </table> </div>
+			</div>
+
+			<div class="chart" id="chartContainer" style="border:2px solid #333; background-color: #0c0c0c; width: 67%; height: 100%;">
+				
+			</div>
+		</div>
+		
 	</body>
 
 	<script src="canvasjs.min.js"></script>
-	<script src="DISEASE.js"></script>
+	<script src="newDISEASE.js"></script>
 </html>
