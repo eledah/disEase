@@ -57,6 +57,18 @@ div {
 	justify-content: center;
 }
 
+#creditsContainer {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	flex-wrap: wrap;
+	align-items: center;
+	align-content: center;
+	height: 3%;
+	margin-top: 1%;
+	justify-content: center;
+}
+
 #scenarioTitle {
 	margin: 0.5%;
 	margin-top: 2%;
@@ -191,10 +203,16 @@ div {
 }
 
 body {
+/*	border: 1px solid #fa1e4e;
+	border-radius: 5px;*/
+	background-color:#0c0c0c;
+
+}
+
+#boundingBox {
 	border: 1px solid #fa1e4e;
 	border-radius: 5px;
 	background-color:#0c0c0c;
-
 }
 
 .slider {
@@ -260,6 +278,51 @@ body {
 }
 
 .dataDesc:hover {
+	color: #CCC;
+	transition-duration: 0.2s;
+}
+
+#creditsText {
+	font-family: Prototype;
+	font-size: 17px;
+}
+
+/* unvisited link */
+a:link {
+	color: #fa1e4e;
+	text-decoration: none;
+	transition-duration: 0.2s;
+}
+
+/* visited link */
+a:visited {
+	color: #fa1e4e;
+	text-decoration: none;
+}
+
+/* mouse over link */
+a:hover {
+	text-shadow: 0 0 5px rgba(255, 0, 0, 0.9);
+	transition-duration: 0.2s;
+	text-decoration: underline;
+}
+
+/* selected link */
+a:active {
+  color: #fa1e4e;
+  text-decoration: none;
+}
+
+.creditsDesc {
+	font-family: Prototype;
+	font-size: 17px;
+	line-height: 25px;
+	color: #AAA;
+	vertical-align: top;
+	transition-duration: 0.2s;
+}
+
+.creditsDesc:hover {
 	color: #CCC;
 	transition-duration: 0.2s;
 }

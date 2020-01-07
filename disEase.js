@@ -1,6 +1,6 @@
 "use strict";
 
-let currentScenario = 8;
+let currentScenario = 1;
 let dataLength = 200;
 let drawCellBorder = false;
 
@@ -567,6 +567,7 @@ function disableInfections() {
 }
 
 function STEP() {
+	resetBoundingBox();
 	Pause();
 	advanceCycle();
 }
@@ -1497,4 +1498,13 @@ function updateCycleTime() {
 		clearInterval(cancelCode);
 		cancelCode = setInterval(advanceCycle, newCycleTime);
 	}
+}
+
+
+function resetBoundingBox() {
+	// let element = document.getElementById("creditsText");
+	// var rect = element.getBoundingClientRect();
+	// let newHeight = rect.y + window.pageYOffset + rect.height + 10;
+	// document.getElementById("boundingBox").style.height = newHeight + "px";
+	// document.getElementById("containerBox").style.height = Math.floor(1080 * 1080 / newHeight) + "px";
 }

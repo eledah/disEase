@@ -11,70 +11,80 @@
 	</head>
 
 	<body>
-		<div class="parent">
-			<div class="container" id="titleContainer">
-				<div id="scenarioTitle" style="height: 100%;">
-					<span id='scenarioName'></span>
+		<div class="parent" style="height: 150%;" id="boundingBox">
+			<div class ="parent" style="height: 66.66%" id="containerBox">
+				<div class="container" id="titleContainer">
+					<div id="scenarioTitle" style="height: 100%;">
+						<span id='scenarioName'></span>
+					</div>
 				</div>
+
+				<div class="container" id="descContainer">
+					<div style="margin:0.5%; height: 100%;">
+						<span class="scenarioDesc" id="description"></span>
+					</div>
+				</div>	
+
+
+				<div class="container" id="container3">
+					<div id="buttons1" style="width: 30%; height: 100%;">
+						<button id="scenarioButton" type="button" name="getVal" onclick="previousScenario()">&lt; Previous Scenario</button> 
+						<button id="scenarioButton" type="button" name="getVal" onclick="nextScenario()">Next Scenario &gt;</button> 
+					</div>
+
+					<div id="buttons1" style=" width: 30%; height: 100%">
+						<button id="actionButton" name="getVal" onclick="INITIALIZE()">.GO</button>
+						<button id="actionButton" name="getVal" onclick="RESET()">.RESET</button>
+						<button id="actionButton" name="getVal" onclick="STEP()">.STEP</button> 
+						<button id="actionButton" name="getVal" onclick="toggleHeatVision()">.HEAT</button> 
+					</div>
+
+					<div id="buttons1" style=" width: 30%; height: 100%; display:flex; align-items: center;">
+						<input type="range" min="10" max="250" value="50" class="slider" id="timeSlider" oninput="updateCycleTime()">
+					</div>
+
+					<div id="buttons1" style=" width: 5%; height: 100%; display: flex; align-items: center;">
+						<span class="scenarioDesc" id="cycleTime">50ms</span>
+					</div>
+
+				</div>
+
+
+				<div class="container" id="container4">
+					<div id="chartsContainer" style="width: 30%;">
+						<div style="width: 100%; border:2px solid #333;" id="tableDiv"><table id = 'mainTABLE'> </table> </div>
+					</div>
+
+					<div class="chart" id="chartContainer" style="border:2px solid #333; background-color: #0c0c0c; width: 67%; height: 100%;">
+					</div>
+				</div>
+
+				<div class="container" id="dataContainer">
+					<div class="dataDiv">
+						<span class="dataNum" id="healthyNum">?</span><br>
+						<span class="dataDesc">Healthy People</span>
+					</div>
+
+					<div class="dataDiv">
+						<span class="dataNum" id="infectedNum">?</span><br>
+						<span class="dataDesc">Infected People</span>
+					</div>
+
+					<div class="dataDiv">
+						<span class="dataNum" id="infectedPercentage">?</span><br>
+						<span class="dataDesc">Infected Percentage</span>
+					</div>
+
+				</div>
+
+				
 			</div>
-
-			<div class="container" id="descContainer">
-				<div style="margin:0.5%; height: 100%;">
-					<span class="scenarioDesc" id="description"></span>
-				</div>
-			</div>	
-
-
-			<div class="container" id="container3">
-				<div id="buttons1" style="width: 30%; height: 100%;">
-					<button id="scenarioButton" type="button" name="getVal" onclick="previousScenario()">&lt; Previous Scenario</button> 
-					<button id="scenarioButton" type="button" name="getVal" onclick="nextScenario()">Next Scenario &gt;</button> 
-				</div>
-
-				<div id="buttons1" style=" width: 30%; height: 100%">
-					<button id="actionButton" name="getVal" onclick="INITIALIZE()">.GO</button>
-					<button id="actionButton" name="getVal" onclick="RESET()">.RESET</button>
-					<button id="actionButton" name="getVal" onclick="STEP()">.STEP</button> 
-					<button id="actionButton" name="getVal" onclick="toggleHeatVision()">.HEAT</button> 
-				</div>
-
-				<div id="buttons1" style=" width: 30%; height: 100%; display:flex; align-items: center;">
-					<input type="range" min="10" max="250" value="50" class="slider" id="timeSlider" oninput="updateCycleTime()">
-				</div>
-
-				<div id="buttons1" style=" width: 5%; height: 100%; display: flex; align-items: center;">
-					<span class="scenarioDesc" id="cycleTime">50ms</span>
-				</div>
-
-			</div>
-
-
-			<div class="container" id="container4">
-				<div id="chartsContainer" style="width: 30%;">
-					<div style="width: 100% height: 100%; border:2px solid #333;"><table id = 'mainTABLE'> </table> </div>
-				</div>
-
-				<div class="chart" id="chartContainer" style="border:2px solid #333; background-color: #0c0c0c; width: 67%; height: 100%;">
-				</div>
-			</div>
-
-			<div class="container" id="dataContainer">
-				<div class="dataDiv">
-					<span class="dataNum" id="healthyNum">?</span><br>
-					<span class="dataDesc">Healthy People</span>
-				</div>
-
-				<div class="dataDiv">
-					<span class="dataNum" id="infectedNum">?</span><br>
-					<span class="dataDesc">Infected People</span>
-				</div>
-
-				<div class="dataDiv">
-					<span class="dataNum" id="infectedPercentage">?</span><br>
-					<span class="dataDesc">Infected Percentage</span>
-				</div>
-
-			</div>
+		</div>
+		<div id="creditsContainer">
+			<p class="creditsDesc">Inspired by Everyday Events</p>
+		</div>
+		<div id="creditsContainer">
+			<a id="creditsText" href="https://github.com/eledah" target="_blank">&#8805; eledah on Github</a>
 		</div>
 	</body>
 
