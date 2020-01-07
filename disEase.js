@@ -1,6 +1,7 @@
 "use strict";
 
-let currentScenario = 1;
+let currentScenario = 8;
+let dataLength = 200;
 let drawCellBorder = false;
 
 // States
@@ -43,7 +44,7 @@ let SCENES = [
 	// 0
 	// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
 	function() {
-		loadScenario(50, 0.01, 1);
+		loadScenario(50, 0.01);
 
 		setInfectionValues(0, 0.2, 2, true, 0, 0.2, 0, 0.00010);
 		setInfectionValues(1, 0.2, 2, true, 0, 0.2, 0, 0.00005);
@@ -89,16 +90,16 @@ let SCENES = [
 	},
 	// 1
 	function () {
-		loadScenario(11, 0, 200);
+		loadScenario(31, 0);
 		setInfectionValues(0, 1, 0, true, 0, 0, 1, 0);
-		initialInfectWith(5, 5, INFECTION[0].VALUE);
+		initialInfectWith(15, 15, INFECTION[0].VALUE);
 		sceneDescription = "This is the simplest model possible. Each person is surrounded by four neighbours. (Except for those on the corners)"
 		+ " Each round, the infected person will infect all his neighbours and then will die."
 		+ "<br>" + "The closest example of this model in real life would be forest wildfires. Where everything burns down and fire is often spread in all directions.";
 	},
 	// 2
 	function() {
-		loadScenario(21, 0, 150);
+		loadScenario(21, 0);
 		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0.5, 0);
 		initialInfectWith(10, 10, INFECTION[0].VALUE);
 		sceneDescription = "It's not commonplace for a disease -or even wildfire- to spread so flawlessly and kill/burn everyone who catches it."
@@ -109,12 +110,11 @@ let SCENES = [
 	},
 	// 3
 	function() {
-		loadScenario(31, 0.05, 100);
+		loadScenario(31, 0.05);
 		setInfectionValues(0, 0.75, 0, true, 0, 0.75, 0.1, 0);
 		INFECTION[4].ENABLED = true;
 		initialInfectWith(Math.floor(Math.random() * LEN), Math.floor(Math.random() * LEN), INFECTION[0].VALUE);
-		fillWithInfection(0, 15, 30, 15, INFECTION[4].VALUE);
-		fillWithInfection(15, 0, 15, 30, INFECTION[4].VALUE);
+		
 		sceneDescription = "For the next phase, we're adding 'Immune Cells' to the model as well. The light blue can be traslated into 'Quarantine areas'."
 		+ " These areas will contain the disease and stop it from spreading."
 		+ "<br>" + "Each time you click 'Reset', a random person will be infected."
@@ -123,10 +123,17 @@ let SCENES = [
 		+ " So they decided to protect them from outer sources of harm. But nowadays we all know that over-controlling parents will bring-up the most arrogant and disobidient childs."
 		+ " And children will find their way to the outer world."
 		+ "<br>" + "Why is that I wonder? The answer is one word: SPAR (Which is actually 3 words but we'll get to it)";
+
+		cycleFunction = function() {
+			if(countInfected() > 10) {
+				fillWithInfection(0, 15, 30, 15, INFECTION[4].VALUE);
+				fillWithInfection(15, 0, 15, 30, INFECTION[4].VALUE);
+			}	
+		}
 	},
 	// 4
 	function() {
-		loadScenario(31, 0.02, 100);
+		loadScenario(31, 0.02);
 		setInfectionValues(0, 0.4, 0.2, true, 0, 0.6, 0, 0);
 		INFECTION[4].ENABLED = true;
 		fillWithInfection(10, 10, 20, 20, INFECTION[4].VALUE);
@@ -139,7 +146,7 @@ let SCENES = [
 	},
 	// 5
 	function() {
-		loadScenario(71, 0.01, 10);
+		loadScenario(71, 0.01);
 		setInfectionValues(0, 0.4, 30, true, 0, 0.3, 0, 0);
 		setInfectionValues(2, 0.5, 0, true, 0, 0.5, 0, 0);
 		setInfectionByRadius(50, 50, 3, INFECTION[0].VALUE);
@@ -155,7 +162,7 @@ let SCENES = [
 	},
 	// 6
 	function() {
-		loadScenario(51, 0.02, 50);
+		loadScenario(51, 0.02);
 		setInfectionValues(0, 0.15, 0.5, true, 0, 0.15, 0, 0);
 
 		cycleFunction = function() {
@@ -183,7 +190,7 @@ let SCENES = [
 	},
 	// 7
 	function() {
-		loadScenario(71, 0, 50);
+		loadScenario(71, 0);
 		setInfectionValues(0, 0.7, 40, true, 0, 0.5, 0, 0);
 		setInfectionValues(2, 0.8, 0.3, true, 0, 0.5, 0, 0);
 
@@ -218,7 +225,7 @@ let SCENES = [
 	},
 	// 8
 	function() {
-		loadScenario(50, 0.01, 10);
+		loadScenario(50, 0.01);
 		// SIMPLE CHANGE OF INFECTION CHANCE
 
 		// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE)
@@ -275,7 +282,7 @@ let SCENES = [
 	},
 	// 9
 	function() {
-		loadScenario(51, 0.2, 50);
+		loadScenario(51, 0.2);
 
 		setInfectionValues(0, 0.5, 5.1, true, 0, 0.5, 0, 0);
 		setInfectionValues(1, 0.7, 0.01, true, 0, 0.7, 0, 0);
@@ -288,7 +295,7 @@ let SCENES = [
 	},
 	// 10
 	function() {
-		loadScenario(51, 0.02, 50);
+		loadScenario(51, 0.02);
 		// // SIMPLE CHANGE OF INFECTION CHANCE
 		// setInfectionValues(0, 0.15, 0.5, true, 0, 0.15, 0, 0);
 
@@ -310,7 +317,7 @@ let SCENES = [
 	},
 	// 11
 	function() {
-		loadScenario(50, 0.01, 10);
+		loadScenario(50, 0.01);
 		// // SIMPLE CHANGE OF INFECTION CHANCE
 
 		// // function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE)
@@ -358,7 +365,7 @@ let SCENES = [
 	},
 	// 12
 	function() {
-		// loadScenario(35, 0.01, 10);
+		// loadScenario(35, 0.01);
 		// setInfectionValues(0, 0.4, 10, true, 0, 0.2, 0.5, 0);
 		// setInfectionValues(2, 1, 2, false, 0, 0.2, 1, 0);
 		// cycleFunction = function() {
@@ -371,7 +378,7 @@ let SCENES = [
 	},
 	// 13
 	function() {
-		// loadScenario(120, 0.04, 5);
+		// loadScenario(120, 0.04);
 
 		// // setDegreeByRadius(25, 25, 15, 5);
 		// // setDegreeByRadius(25, 25, 7, 6);
@@ -438,7 +445,8 @@ const RUNNING = 1;
 
 
 // COLORS
-const COLOR_DEAD = "#B0BEC5";
+// const COLOR_DEAD = "#B0BEC5";
+const COLOR_DEAD = "grey";
 const COLOR_IMMUNE = "#B3E5FC";
 const COLOR_INFECTED = "#EC407A";
 	// TYPES
@@ -454,7 +462,6 @@ const COLOR_SUSCEPTIBLE = "#0d0d0d";
 
 
 // Chart Declaration
-let dataLength = 200;
 let mainChart; 
 let chart;
 let averageInfected = 0;
@@ -484,6 +491,8 @@ drawTable();
 
 
 function INITIALIZE() {
+	cycleDelay = document.getElementById("timeSlider").value;
+
 	if (runState == RUNNING){
 		clearInterval(cancelCode);
 	}
@@ -583,18 +592,16 @@ function updateChances() {
 }
 
 function updateDataTable() {
-	// let dataTable = document.getElementById("dataTable");
-	// dataTable.rows[0].cells[1].innerHTML = countSusceptible();
-	// dataTable.rows[1].cells[1].innerHTML = countInfected();
-	// dataTable.rows[2].cells[1].innerHTML = Math.floor(averageInfected);
-	// dataTable.rows[3].cells[1].innerHTML = countDead();
+	let infectedNum = countInfected();
+	document.getElementById("healthyNum").innerHTML = countSusceptible();
+	document.getElementById("infectedNum").innerHTML = infectedNum;
+	document.getElementById("infectedPercentage").innerHTML = Math.floor((infectedNum / (LEN * LEN)) * 100) + "%";
 }
 
 function resetDataTable() {
-	// dataTable.rows[0].cells[1].innerHTML = "?";
-	// dataTable.rows[1].cells[1].innerHTML = "?";
-	// dataTable.rows[2].cells[1].innerHTML = "?";
-	// dataTable.rows[3].cells[1].innerHTML = "?";
+	document.getElementById("healthyNum").innerHTML = "?";
+	document.getElementById("infectedNum").innerHTML = "?";
+	document.getElementById("infectedPercentage").innerHTML = "?";
 }
 
 function updateSliderValue() {
@@ -1150,11 +1157,11 @@ function setInfectionByRadius(m, n, RADIUS, infectionType) {
 }
 
 // function loadScenario(tableLength, modelType, immC, delay) {
-function loadScenario(tableLength, immC, delay) {
+function loadScenario(tableLength, immC) {
 	LEN = tableLength;
 	// MODEL = modelType;
 	INFECTION[4].immunityCHANCE = immC;
-	cycleDelay = delay;
+	// cycleDelay = delay;
 
 	MAIN = createArray(LEN, LEN);
 	SCND = createArray(LEN, LEN);
@@ -1313,7 +1320,7 @@ function declareChart() {
 				showInLegend: true,
 				type: "line",
 				name: "Death per Round",
-				color: "",
+				color: "white",
 				dataPoints: dedprdps	
 			}
 		]
@@ -1480,4 +1487,14 @@ function calculateAverageInfectedByPercentageForCycleCount(CYCLECOUNT, PERCENTAG
 		returnToState();
 	}
 	return (infectionCount / repeat);
+}
+
+function updateCycleTime() {
+	let newCycleTime = document.getElementById("timeSlider").value;
+	cycleDelay = newCycleTime;
+	document.getElementById("cycleTime").innerHTML = newCycleTime + "ms";
+	if(runState == RUNNING) {
+		clearInterval(cancelCode);
+		cancelCode = setInterval(advanceCycle, newCycleTime);
+	}
 }
