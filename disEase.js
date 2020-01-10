@@ -1,6 +1,6 @@
 "use strict";
 
-let currentScenario = 1;
+let currentScenario = 0;
 let dataLength = 200;
 let drawCellBorder = false;
 
@@ -38,55 +38,26 @@ let timesInfected;
 let maxHeat = 0;
 let heatVision = false;
 
+let sceneTitle = "";
 let sceneDescription = "";
 
 let SCENES = [ 
 	// 0
 	// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
 	function() {
-		loadScenario(50, 0.01);
-
-		setInfectionValues(0, 0.2, 2, true, 0, 0.2, 0, 0.00010);
-		setInfectionValues(1, 0.2, 2, true, 0, 0.2, 0, 0.00005);
-		setInfectionValues(2, 0.2, 2, true, 0, 0.2, 0, 0.00001);
-
-		INFECTION[4].ENABLED = true;
-		INFECTION[4].SPAR = 0.02;
-		INFECTION[4].INFECTION_CHANCE = 0.5;
-
-		let changeValue = 0.012;
-		let bottomInfection = 0;
-		cycleFunction = function() {
-			if(CYCLE % 150 < 75) {
-				if(INFECTION[0].INFECTION_CHANCE > changeValue && INFECTION[0].INFECTION_CHANCE > (bottomInfection + changeValue)) {
-					INFECTION[0].INFECTION_CHANCE -= changeValue;
-					INFECTION[0].REINFECTION_CHANCE -= changeValue;
-				}
-			} else {
-				INFECTION[0].INFECTION_CHANCE += changeValue;
-				INFECTION[0].REINFECTION_CHANCE += changeValue;
-			}
-			if((CYCLE + 50) % 150 < 75) {
-				if(INFECTION[1].INFECTION_CHANCE > changeValue && INFECTION[1].INFECTION_CHANCE > (bottomInfection + changeValue)) {
-					INFECTION[1].INFECTION_CHANCE -= changeValue;
-					INFECTION[1].REINFECTION_CHANCE -= changeValue;
-				}
-			} else {
-				INFECTION[1].INFECTION_CHANCE += changeValue;
-				INFECTION[1].REINFECTION_CHANCE += changeValue;
-			}
-			if((CYCLE + 100) % 150 < 75) {
-				if(INFECTION[2].INFECTION_CHANCE > changeValue && INFECTION[2].INFECTION_CHANCE > (bottomInfection + changeValue)) {
-					INFECTION[2].INFECTION_CHANCE -= changeValue;
-					INFECTION[2].REINFECTION_CHANCE -= changeValue;
-				}
-			} else 	{
-				INFECTION[2].INFECTION_CHANCE += changeValue;
-				INFECTION[2].REINFECTION_CHANCE += changeValue;
-			}
-			// console.log(INFECTION[0].INFECTION_CHANCE + " " + INFECTION[1].INFECTION_CHANCE);
-			// updateSliderValue();
-		}
+		loadScenario(50, 0.3);
+		setInfectionValues(0, 1, 0, true, 0, 0, 1, 0);
+		initialInfectWith(25, 25, INFECTION[0].VALUE);
+		sceneTitle = "How to Operate disEase.js:"
+		sceneDescription = "disEase.js is a simple model, which tries to shed some light on the relation between infectious diseases and the media we consume."
+		+ "<br>" + "To start things off, I want to mention how a disease like 'The Plague' and a form of media like 'Rumor' can be pretty much the same. "
+		+ "<br>" + "A Virus contains some genetic information that enters your body from someone else's. The viruses undermine your body's resources to reproduce themselves. "
+		+ "Alongside with that, some of them will exit your body to cause new hosts. Soon after, your productivity will be reduced dramatically. "
+		+ "And in some cases, it may lead to death."
+		+ "<br>"
+		+ "A Rumor contains some non-genetic information that enters your mind from someone else's. The misinformation/bad news undermines your mind's presence to deepen the thought. "
+		+ "Alongside with that, you might share the thought with the ones around you. Soon after, you will feel nothing but hopelessness. "
+		+ "And is some cases, it may lead to suicide."
 	},
 	// 1
 	function () {

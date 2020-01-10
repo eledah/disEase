@@ -16,7 +16,7 @@ div {
 	align-content: flex-start;
 	margin: auto;
 	margin-top: 1%;
-	background-color:#040404;
+	background-color:#0c0c0c;
 }
 
 .container {
@@ -71,7 +71,7 @@ div {
 
 #scenarioTitle {
 	margin: 0.5%;
-	margin-top: 2%;
+	margin-top: 1%;
 }
 
 #buttons1 {
@@ -193,7 +193,7 @@ div {
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #0f0f0f; 
+  background: #4f4f4f; 
   border-radius: 10px;
 }
 
