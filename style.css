@@ -48,12 +48,13 @@ div {
 }
 
 #container4 {
-	height: 50%;
+	height: 350px;
 	justify-content: left;
 }
 
 #dataContainer {
 	height: 20%;
+	margin-top: 0;
 	justify-content: center;
 }
 
@@ -88,7 +89,17 @@ div {
 	margin-left: 0.5%;
 }
 
-#chartsContainer {
+#tableChartContainer {
+	width: 350px;
+	height: 350px;
+	margin: 0.5%;
+}
+
+#chartContainer {
+	height: 350px;
+	border:2px solid #333;
+	background-color: #0c0c0c;
+	width: 67%;
 	margin: 0.5%;
 }
 
@@ -120,13 +131,13 @@ div {
 	font-family: Prototype;
 	font-size: 17px;
 	line-height: 25px;
-	color: #AAA;
+	color: #CCC;
 	vertical-align: top;
 	transition-duration: 0.2s;
 }
 
 .scenarioDesc:hover {
-	color: #CCC;
+	color: #EEE;
 	transition-duration: 0.2s;
 }
 
@@ -169,9 +180,6 @@ div {
 	transition-duration: 0.4s;
 }
 
-#chartContainer {
-	margin: 0.5%;
-}
 
 #maintable {
 	border: 1px solid #AAA;

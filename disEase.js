@@ -1,6 +1,6 @@
 "use strict";
 
-let currentScenario = 0;
+let currentScenario = 10;
 let dataLength = 200;
 let drawCellBorder = false;
 
@@ -45,62 +45,78 @@ let SCENES = [
 	// 0
 	// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
 	function() {
-		loadScenario(50, 0.3);
+		loadScenario(61, 0.3);
 		setInfectionValues(0, 1, 0, true, 0, 0, 1, 0);
-		initialInfectWith(25, 25, INFECTION[0].VALUE);
-		sceneTitle = "How to Operate disEase.js:"
-		sceneDescription = "disEase.js is a simple model, which tries to shed some light on the relation between infectious diseases and the media we consume."
-		+ "<br>" + "To start things off, I want to mention how a disease like 'The Plague' and a form of media like 'Rumor' can be pretty much the same. "
-		+ "<br>" + "A Virus contains some genetic information that enters your body from someone else's. The viruses undermine your body's resources to reproduce themselves. "
-		+ "Alongside with that, some of them will exit your body to cause new hosts. Soon after, your productivity will be reduced dramatically. "
-		+ "And in some cases, it may lead to death."
-		+ "<br>"
-		+ "A Rumor contains some non-genetic information that enters your mind from someone else's. The misinformation/bad news undermines your mind's presence to deepen the thought. "
-		+ "Alongside with that, you might share the thought with the ones around you. Soon after, you will feel nothing but hopelessness. "
-		+ "And is some cases, it may lead to suicide."
+		
+		initialInfectWith(0, 0, INFECTION[0].VALUE);
+
+		sceneTitle = "What is this all about?"
+		sceneDescription = "disEase.js is a simple model, which tries to shed some light on how <i>infectious pieces of information</i> (such as physical diseases, mental diseases and rumors) "
+		+ "spread throughout a group of individuals in a society."
+		+ "<br>" + "<br>" + "The first set of buttons -right below this text- help you navigate through different scenarios. Each scenario has got it's own story to tell about the matter."
+		+ "<br>" + "The second set of buttons -.GO, .RESET, .STEP and .HEAT control the model. '.GO' Runs the model, '.RESET' does whatever its name suggests, '.STEP' moves the model to its next step " 
+		+ "and finally, '.HEAT' changes the view of the model and displays a heatmap of diseases instead (Which will be used later on)."
+		+ "<br>" + "And to the left, is the model's CT (Cycle Time) in miliseconds. The lower it is, the faster the model runs. But remember, sometimes the model limits the CT, not the slider."
+		+ "<br>" + "<br>" + "Under the buttons, lie the two charts. These two, display the model is their own fashions. The Graphical Table on the left, displays a live representation of the model, while the "
+		+ "Statistical Table on the left, displays the model numbers over the time on a chart."
+		+ "<br>" + "<br>" + "Go ahead and run the current model for a few times. Remember that all will be explained in the upcoming scenarios. So whenever you are ready, go to the next one."
 	},
 	// 1
 	function () {
 		loadScenario(31, 0);
 		setInfectionValues(0, 1, 0, true, 0, 0, 1, 0);
 		initialInfectWith(15, 15, INFECTION[0].VALUE);
+		setCycleTime(150);
+		sceneTitle = "SIR Model."
 		sceneDescription = "This is the simplest model possible. Each person is surrounded by four neighbours. (Except for those on the corners)"
-		+ " Each round, the infected person will infect all his neighbours and then will die."
-		+ "<br>" + "The closest example of this model in real life would be forest wildfires. Where everything burns down and fire is often spread in all directions.";
+		+ " Each round, the infected person will infect all their neighbours and then will die."
+		+ "<br>" + "The closest example of this model in real life would be forest wildfires. Where everything burns down and fire is often spread in all directions until it reaches a river or something like that "
+		+ "which halts the progress of infection."
+		+ "<br>" + "To make the model more realistic, we're going to bring on the mathematics! Whenever ready, head on to the next scenario.";
 	},
 	// 2
 	function() {
 		loadScenario(21, 0);
 		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0.5, 0);
 		initialInfectWith(10, 10, INFECTION[0].VALUE);
+
+		cycleFunction = function() {
+			setDatatableNum(countDead());
+			setDatatableText("Dead People");	
+		}
+
+		sceneTitle = "SIR Model. Now with Probability!"
 		sceneDescription = "It's not commonplace for a disease -or even wildfire- to spread so flawlessly and kill/burn everyone who catches it."
 		+ " In order to reach a more realistic model, we will use probabilities for many factors of any infectious entity."
-		+ "<br>" + "1- The first factor would be 'Infection Chance'. The chance which decides if a neighbour gets infected, given the fact that their neighbours are infected."
-		+ "<br>" + "2- The second factor is 'Re-Infection Chance'. Which decides that whether an infected person is going to be infected in the next round as well."
-		+ "<br>" + "3- And finally, 'Death Chance'. Which decides the fate of individuals. <br>In this model, all three factors are set to 50%.";
+		+ "<br>" + "1- The first factor would be <i>'Infection Chance'</i>. The chance which decides if a neighbour gets infected, given the fact that their neighbours are infected."
+		+ "<br>" + "2- The second factor is <i>'Re-Infection Chance'</i>. Which decides that whether an infected person is going to be infected in the next round as well."
+		+ "<br>" + "3- And finally, <i>'Death Chance'</i>. A roll of dice which decides the fate of the infected individual. <br>In this model, all three factors are set to 50%.";
 	},
 	// 3
 	function() {
-		loadScenario(31, 0.05);
+		loadScenario(31, 0.01);
 		setInfectionValues(0, 0.75, 0, true, 0, 0.75, 0.1, 0);
 		INFECTION[4].ENABLED = true;
 		initialInfectWith(Math.floor(Math.random() * LEN), Math.floor(Math.random() * LEN), INFECTION[0].VALUE);
 		
-		sceneDescription = "For the next phase, we're adding 'Immune Cells' to the model as well. The light blue can be traslated into 'Quarantine areas'."
-		+ " These areas will contain the disease and stop it from spreading."
-		+ "<br>" + "Each time you click 'Reset', a random person will be infected."
-		+ " And for each and every round, you will see that the disease is contained and the amount of surviving individuals -compared to last model- significantly increases."
-		+ "<br>" + "Since this was a working method when it came to diseases and forest fires, some parents thoughts that they could do the same for their children."
-		+ " So they decided to protect them from outer sources of harm. But nowadays we all know that over-controlling parents will bring-up the most arrogant and disobidient childs."
-		+ " And children will find their way to the outer world."
-		+ "<br>" + "Why is that I wonder? The answer is one word: SPAR (Which is actually 3 words but we'll get to it)";
-
 		cycleFunction = function() {
-			if(countInfected() > 10) {
+			if(countDead() > 10) {
 				fillWithInfection(0, 15, 30, 15, INFECTION[4].VALUE);
 				fillWithInfection(15, 0, 15, 30, INFECTION[4].VALUE);
-			}	
+			}
+
+			setDatatableNum(countDead());
+			setDatatableText("Dead People");
 		}
+
+		sceneTitle = "Disease Immunity and The Importance of Quarantine."
+		sceneDescription = "For the next phase, we're adding 'Immune' cells to the model as well. Immune people simply do not get sick."
+		+ "<br>" + "Each time you click 'Reset' in this model, a random person will be infected for the model to work. "
+		+ "And for each and every round, there will be a quarantine in place after 10 or more people are reported to be dead. "
+		+ "Quarantines were and are used to contain infections from spreading. If you run the model for yourself, it's easy to spot the reason for their success."
+		+ "<br>" + "<br>" + "And since this was a working method when it came to diseases, some parents thoughts that they could do the same for their children. Basically, they tried to "
+		+ "raise their children in a quarantine area, where no harm or misinformation could come to them. From my own experience dealing with children of said childhoods, I can assure you "
+		+ "that raising children in a quarantine area is extremely dangerous to them in the longterm. 'Why' you ask? Well, let us find out in the next scenario."
 	},
 	// 4
 	function() {
@@ -109,11 +125,14 @@ let SCENES = [
 		INFECTION[4].ENABLED = true;
 		fillWithInfection(10, 10, 20, 20, INFECTION[4].VALUE);
 		fillWithInfection(12, 12, 18, 18, 0);
-		sceneDescription = "Why do breaking news always find their way andfind their voice during the harshest methods of censorship?"
-		+ " How did the child with over-protective parents easily gained access to all those contents forbidden for him?"
-		+ " Aside from 'The Internet' being the answer, all these events happen because another infection factor which is called SPAR."
-		+ "<br>" + "[SP]ontaneous [A]ctivation [R]ate decides whether a random infection is going to spawn or not. You can think of it as 'A Global Infection Rate' or 'A diseses that's in the air."
-		+ "<br>" + "SPAR bypasses all quarantines and limitations. As long as the infection rate is high enough, SPAR will gurantee that everyone will know about the news/infection.";
+		sceneTitle = "How to Bypass Quarantines as a Virus?"
+		sceneDescription = "But does the quarantine method work anymore? Is 'Isolating the Child' a working method? Is 'Extreme Censorship' going to work for the governments? "
+		+ "<br>" + "I don't know the definite answer to that. However, from my point of view, the quarantine method doesn't work anymore. Why?"
+		+ "<br>" + "Well, aside from 'the Internet happened' being an answer -which is too general- I'd like to introduce another factor in infectious diseases, "
+		+ "which is called SPAR or [SP]ontaneous [A]ctivation [R]ate."
+		+ "<br>" + "<br>" +"SPAR decides whether a random infection is going to spawn or not. You can think of it as 'A Global Infection Rate' or 'A diseses that's in the air. "
+		+ "Which bypasses all quarantines and limitations. As long as the infection rate is high enough, SPAR will guarantee that everyone will hear about the news/infection."
+		+ "<br>" + "<br>" + "In this model, you can see how the quarantine barriers try to hold the infection back, but fail miserably. Because sometimes, the disease comes from within.";
 	},
 	// 5
 	function() {
@@ -124,12 +143,22 @@ let SCENES = [
 		setInfectionByRadius(20, 50, 3, INFECTION[0].VALUE);
 		setInfectionByRadius(50, 20, 3, INFECTION[0].VALUE);
 		setInfectionByRadius(20, 20, 3, INFECTION[2].VALUE);
+
+		cycleFunction = function() {
+			setDatatableNum(Math.floor(countInfectedByValue(INFECTION[2].VALUE) * 100 / countInfected()) + "%");
+			setDatatableText("Percentage of YELLOW");
+		}
+
+		sceneTitle = "Let them Fight!"
 		sceneDescription = "Let's do a little bit of experimentation. Here we have got 2 different diseases."
-		+ "<br>" + "The 'RED' disease has a high SPAR and a low infection rate. Meaning that most of the news outlets are talking about it. But people really don't -and shouldn't- care about it."
-		+ "<br>" + "The 'GREEN' disease, on the other hand, has got a low SPAR and a high infection. Meaning that it is rather important but highly overlooked."
-		+ "<br>" + "Press 'Start' and see the results for yourself!<br>What happens is that the RED news will first overtake the community."
-		+ " But overtime and in the long term, it's the GREEN disease that takes over. In reality and with the current circumstances,"
-		+ "<br>" + "'Long Term' doesn't really happen. Why? Becuase the the SPAR and Infection Rate are everchanging.";
+		+ "<br>" + "The 'RED' disease has a high SPAR and a low Infection Chance. Meaning that the people quickly forget about it. On the other hand, the news outlets are talking way too much about it."
+		+ "<br>" + "The 'YELLOW' disease, on the other hand, has got a low SPAR and a high Infection Chance. Meaning that it is rather important. Anyone who hears about it, will think about it. "
+		+ "But for some reason, it's highly overlooked when it comes to news media outlets."
+		+ "<br>" + "Run the model and see the results for yourself!"
+		+ "<br>" + "<br>" + "As you can see, RED news will first overtake the community. "
+		+ "But overtime and in the long term, it's the YELLOW disease that takes over. Which is good, right? A crucial peace of information finally gaining headlines and getting people to talk about it. "
+		+ "Sounds too good to be true. However, in the reality we live in and with the current circumstances, we don't experience such scenarios. Why? Becuase the the SPAR and Infection Rate are everchanging."
+		+ "<br>" + "In the next scenario, we shortly discuss the rates that affect the life cycle of a news.";
 	},
 	// 6
 	function() {
@@ -148,14 +177,19 @@ let SCENES = [
 			}
 			// updateSliderValue();
 		}
-		sceneDescription = "After reviewing 5 different scenarios, this is where the complications really begin to show."
-		+ "<br>" + "As the name suggests, 'News' is all about 'New' occurings. No-one gives a damn about old news."
-		+ " Why would they? The point I'm trying to make is that each and every news, gas a life cycle and we're trying to model that right over here."
-		+ "<br>" + "For each news, there are 3 different phases (Some say it's 5 but let's go with 3 for now):"
+		sceneTitle = "The Cycle of Life."
+		sceneDescription = "Why would anyone care about the suicide victims of 2013? We're well past that. Why would we care about forest fires that happened two weeks ago? "
+		+ "There are newer occurings that I could care about. "
+		+ "<i>I've seen all the memes and consumed all the media about them. So please, give me something new to have feelings about. Miss me with that old stuff.</i>"
+		+ "<br>" + "<br>" + "As the name suggests, 'News' is all about the 'New' occurings. Nobody gives a damn about old news. And with the Internet and its light-speed news, we get bored way too faster. "
+		+ "No matter how short, each and every news has a life cycle. That's what we're trying to model right over here."
+		+ "<br>" + "<br>" + "Basically, for each news there are 3 different phases (Some say it's 5 but let's go with the simpler version for now):"
 		+ "<br>" + "1- When nobody knows about it and it's about to go mainstream."
 		+ "<br>" + "2- When it's mainstream and almost everyone knows about it."
 		+ "<br>" + "3- When the slowpokes and those living under the rocks find out about it."
-		+ "<br>" + "In order to model these three phases, we increase -and decrease- the infection values on a linear basis."
+		+ "<br>" + "As an example, let's take a look at a normal internet meme. Some person randomly starts something. Those around them will popularize it and then it goes mainstream."
+		+ "After recieving the 'Mainstream' treatment, people will eventually get bored of it and move on to the next meme. Said meme will get the 'Facebook Treatment' and die in misery."
+		+ "<br>" + "<br>" + "In order to model these three phases in a simple manner, we increase -and decrease- the infection values on a linear basis."
 		+ " Each cycle, the infection rate is changed by 0.02 (depending on whether it's going up or down) and SPAR is changed by 0.1."
 		+ "<br>" + "Press start and see the results for yourself."
 	},
@@ -170,6 +204,9 @@ let SCENES = [
 		setInfectionByRadius(50, 20, 3, INFECTION[0].VALUE);
 		setInfectionByRadius(20, 20, 3, INFECTION[2].VALUE);
 
+		let totalInfected = 0;
+		let totalYellow = 0;
+
 		cycleFunction = function() {
 			INFECTION[0].INFECTION_CHANCE -= 0.01;
 			INFECTION[0].REINFECTION_CHANCE -= 0.01;
@@ -181,22 +218,33 @@ let SCENES = [
 				INFECTION[0].INFECTION_CHANCE = 0;
 			}
 
-			// updateSliderValue();
+			totalInfected += countInfected();
+			totalYellow += countInfectedByValue(INFECTION[2].VALUE);
+
+			setDatatableNum(Math.floor(totalYellow * 100 / totalInfected) + "%");
+			setDatatableText("YELLOW's Share of Infections")
+
 		}
-		sceneDescription = "In the future, everyone will be world-famous for 15 minutes."
-		+ "<br>" + "-Andy Warhol, 1968."
-		+ "<br>" + "Remember the model with RED and GREEN disease? Now we are going change their variables."
-		+ " Since no matter how loud you shout something, people will eventually get bored of the same news and move on."
+		sceneTitle = "A more Realistic Look Into the Fight."
+		sceneDescription = "<i>All the World's a Stage."
+		+ "<br>" + "> William Shakespeare</i>"
+		+ "<br>" + "<br>" + "Remember the model with RED and YELLOW disease? Where in the end, almost everyone was following the Important news? Good times. "
+		+ "However, we are now going to face reality and give them a life cycle."
+		+ " Since no matter how loud you shout something, people will eventually get bored of the same news and move on to the next one."
 		+ "<br>" + "By increasing and decreasing the infection chances, we're creating a life cycle for each news."
-		+ "<br>" + "Press Start, play around and see which news is getting to more people during its life cycle."
-		+ "<br>" + "Obviously, the news with more outlets and louder shouts will have more listeners."
-		+ " The problem is that the idea of 'Democracy' wouldn't mean much under these circumstances. Since those with the money and power will control the media, and therefore the people's ideas."
-		+ "<br>" + "If our beliefs and biases are following those of the medias', then the concept of 'Individuality' and 'Freedom' is nothing but a joke to laugh at."
-		+ " As intelligent human beings, we should not let media outlets -and generally speaking, outside memes (Even this webpage(!))- define 'Right' or 'Wrong' for us.";
+		+ "<br>" + "<br>" + "As you can see for yourself, no matter the importance, in the end it's the news with more outlets and louder shouts that gains most of the engagements. "
+		+ "Meaning that by having media by your side, you can determine what most people think -and therefore, act-."
+		+ "Under such circumstances, the idea of 'Democracy' wouldn't mean much. Those with the money and power will control the media, and therefore the people's ideas and actions."
+		+ "<br>" + "<br>" + "Watching people care about something important and suddenly leave it the other day just to care about something else tells me something irritating. "
+		+ "People don't want to act accordingly and solve the problems, they just want to sympathize with other human beings. <i>I'm not feeling sad to motivate myself, I'm feeling sad "
+		+ "to feel as a human being and feel better afterwards.</i>"
+		+ "<br>" + "<br>" + "If our beliefs and biases are following those of the medias', then the concept of 'Individuality' and 'Freedom' is nothing but a joke to laugh at."
+		+ " As intelligent human beings, we should not let media outlets -and generally speaking, outside memes (Even this webpage(!))- define 'Right' or 'Wrong' for us. Caring and sympathizing is"
+		+ "a required part of human nature. But what use is it if it's not leading to actions?";
 	},
 	// 8
 	function() {
-		loadScenario(50, 0.01);
+		loadScenario(51, 0.01);
 		// SIMPLE CHANGE OF INFECTION CHANCE
 
 		// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE)
@@ -208,8 +256,11 @@ let SCENES = [
 		INFECTION[4].SPAR = 0.002;
 		INFECTION[4].INFECTION_CHANCE = 0;
 
+		initialInfectWith(25, 25, SUS);
+
 		let changeValue = 0.012;
 		let bottomInfection = 0;
+		let infectionCounter = 0;
 		cycleFunction = function() {
 			if(CYCLE % 150 < 75) {
 				if(INFECTION[0].INFECTION_CHANCE > changeValue && INFECTION[0].INFECTION_CHANCE > (bottomInfection + changeValue)) {
@@ -238,17 +289,28 @@ let SCENES = [
 				INFECTION[2].INFECTION_CHANCE += changeValue;
 				INFECTION[2].REINFECTION_CHANCE += changeValue;
 			}
-			// updateSliderValue();
+
+			if(isInfected(25, 25)) {
+				infectionCounter++;
+				setDatatableNum(Math.floor(infectionCounter * 100 / CYCLE) + "%");
+				setDatatableText("Percentage of the time that the middle person is sick.");
+
+			}
+
 		}
-		sceneDescription = "The internet and its light-speed methods made it possible for news outlets to publish news stories without any delay."
+		sceneTitle = "What Lies Beyond the Surface."
+		sceneDescription = "<i>In the future, everyone will be world-famous for 15 minutes."
+		+ "<br>" + "> Andy Warhol, 1968.</i>"
+		+ "<br>" + "<br>" + "The internet and its light-speed methods made it possible for news outlets to publish news stories without any delay."
 		+ " More than ever, we are exposed to different news from all over the world."
 		+ " And for whatever reason, whenever I check my news feed, it's filled to the brim with death, fraud, kidnapping and other types of 'Bad News'."
 		+ " It's as if nobody cares about 'Good News' and we're all here to experience and talk about misery."
-		+ "<br>" + "Bad news after bad news, it infects us all with despair and hopelessness."
-		+ "<br>" + "I wanted to model this overflow of news to fully understand how it affects us and how to deal with it."
-		+ "<br>" + "So in this scenario, different diseases grow and fall with a fixed frequency (depending on the cycle number)."
-		+ " As the code runs, you might want to look at the orange graph line, which indicates 'The Average Infected People Until Now'."
-		+ "<br>" + "If you have let the code run long enough, you will see that more than 50% of people (nearly 60%) are always 'Sick' or 'Depressed' or 'Hopleless'."
+		+ "<br>" + "<br>" + "Bad news after bad news, it is as an infection of despair and hopelessness is taking over us all."
+		+ "<br>" + "<br>" + "I wanted to model this overflow of news to fully understand how it affects us and how to deal with it. This is why I probably started it all: "
+		+ "To understand 'How to deal with overwhelming rush of depressing news?'"
+		+ "<br>" + "So in this scenario, different diseases -depressing news- grow and fall with a fixed frequency (depending on the cycle number). Just after one ends, another one comes around the corner."
+		+ "<br>" + "<br>" + " As the code runs, you might want to look at the orange graph line, which indicates 'The Average Infected People Until Now'."
+		+ "<br>" + "<br>" + "If you have let the code run long enough, you will see that more than 50% of people (nearly 60%) are always 'Sick' or 'Depressed' or 'Hopleless'."
 		+ " Why, because they let themselves to be taken by these news waves every single time. How does one break out of this mundane everyday cycle? idk I haven't wrote that part yet."
 	},
 	// 9
@@ -262,77 +324,69 @@ let SCENES = [
 
 		setInfectionByRadius(10, 10, 3, INFECTION[0].VALUE);
 		setInfectionByRadius(40, 40, 2, INFECTION[1].VALUE);
+
+		sceneTitle = "Shut It Down."
 		sceneDescription = "This section is incomplete.";
 	},
 	// 10
 	function() {
-		loadScenario(51, 0.02);
-		// // SIMPLE CHANGE OF INFECTION CHANCE
-		// setInfectionValues(0, 0.15, 0.5, true, 0, 0.15, 0, 0);
-
-		// INFECTION[4].ENABLED = true;
-
-		// // setInfectionByRadius(10, 10, 3, INFECTION[0].VALUE);
-		// cycleFunction = function() {
-		// 	if(CYCLE % 80 < 40) {
-		// 		INFECTION[0].INFECTION_CHANCE += 0.02;
-		// 		INFECTION[0].REINFECTION_CHANCE += 0.02;
-		// 		INFECTION[0].SPAR += 0.5;
-		// 	}else{
-		// 		INFECTION[0].INFECTION_CHANCE -= 0.02;
-		// 		INFECTION[0].REINFECTION_CHANCE -= 0.02;
-		// 		INFECTION[0].SPAR -= 0.5;
-		// 	}
-		// 	// updateSliderValue();
-		// }
+		loadScenario(61, 0);
+		// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
+		setInfectionValues(0, 0.4, 0.5, true, 0.0001, 0.4, 0.1, 0.004);
+		
 	},
 	// 11
 	function() {
-		loadScenario(50, 0.01);
-		// // SIMPLE CHANGE OF INFECTION CHANCE
+		loadScenario(70, 0.01);
+		// Which is more important? Infection Chance or Re-Infection Chance?
+		setInfectionValues(0, 0.5, 1, true, 0, 0.5, 0, 0);
 
-		// // function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE)
-		// setInfectionValues(0, 0.2, 2, true, 0, 0.2, 0, 0.00010);
-		// setInfectionValues(1, 0.2, 2, true, 0, 0.2, 0, 0.00005);
-		// setInfectionValues(2, 0.2, 2, true, 0, 0.2, 0, 0.00001);
+		let decider = 0;
 
-		// INFECTION[4].ENABLED = true;
-		// INFECTION[4].SPAR = 0.002;
-		// INFECTION[4].INFECTION_CHANCE = 0;
+		cycleFunction  = function() {
+			if(CYCLE % 200 == 0) {
+				decider++;	
+				clearTableFromInfections();
+			}
 
-		// let changeValue = 0.012;
-		// let bottomInfection = 0;
-		// cycleFunction = function() {
-		// 	if(CYCLE % 150 < 75) {
-		// 		if(INFECTION[0].INFECTION_CHANCE > changeValue && INFECTION[0].INFECTION_CHANCE > (bottomInfection + changeValue)) {
-		// 			INFECTION[0].INFECTION_CHANCE -= changeValue;
-		// 			INFECTION[0].REINFECTION_CHANCE -= changeValue;
-		// 		}
-		// 	} else {
-		// 		INFECTION[0].INFECTION_CHANCE += changeValue;
-		// 		INFECTION[0].REINFECTION_CHANCE += changeValue;
-		// 	}
-		// 	if((CYCLE + 50) % 150 < 75) {
-		// 		if(INFECTION[1].INFECTION_CHANCE > changeValue && INFECTION[1].INFECTION_CHANCE > (bottomInfection + changeValue)) {
-		// 			INFECTION[1].INFECTION_CHANCE -= changeValue;
-		// 			INFECTION[1].REINFECTION_CHANCE -= changeValue;
-		// 		}
-		// 	} else {
-		// 		INFECTION[1].INFECTION_CHANCE += changeValue;
-		// 		INFECTION[1].REINFECTION_CHANCE += changeValue;
-		// 	}
-		// 	if((CYCLE + 100) % 150 < 75) {
-		// 		if(INFECTION[2].INFECTION_CHANCE > changeValue && INFECTION[2].INFECTION_CHANCE > (bottomInfection + changeValue)) {
-		// 			INFECTION[2].INFECTION_CHANCE -= changeValue;
-		// 			INFECTION[2].REINFECTION_CHANCE -= changeValue;
-		// 		}
-		// 	} else 	{
-		// 		INFECTION[2].INFECTION_CHANCE += changeValue;
-		// 		INFECTION[2].REINFECTION_CHANCE += changeValue;
-		// 	}
-		// 	// console.log(INFECTION[0].INFECTION_CHANCE + " " + INFECTION[1].INFECTION_CHANCE);
-		// 	// updateSliderValue();
-		// }
+			if(decider > 6)
+				decider = 0;
+
+			switch(decider) {
+				case 0:
+					INFECTION[0].INFECTION_CHANCE = 0.2;
+					INFECTION[0].REINFECTION_CHANCE = 0.8;
+					break;
+				case 1:
+					INFECTION[0].INFECTION_CHANCE = 0.3;
+					INFECTION[0].REINFECTION_CHANCE = 0.7;
+					break;
+				case 2:
+					INFECTION[0].INFECTION_CHANCE = 0.4;
+					INFECTION[0].REINFECTION_CHANCE = 0.6;
+					break;
+				case 3:
+					INFECTION[0].INFECTION_CHANCE = 0.5;
+					INFECTION[0].REINFECTION_CHANCE = 0.5;
+					break;
+				case 4:
+					INFECTION[0].INFECTION_CHANCE = 0.6;
+					INFECTION[0].REINFECTION_CHANCE = 0.4;
+					break;
+				case 5:
+					INFECTION[0].INFECTION_CHANCE = 0.7;
+					INFECTION[0].REINFECTION_CHANCE = 0.3;
+					break;
+				case 6:
+					INFECTION[0].INFECTION_CHANCE = 0.8;
+					INFECTION[0].REINFECTION_CHANCE = 0.2;
+					break;
+			}
+
+			setDatatableNum(INFECTION[0].INFECTION_CHANCE + ", " + INFECTION[0].REINFECTION_CHANCE);
+			setDatatableText("Infection + Reinfection Chance");
+		}
+		sceneTitle = "Consistency is Key.";
 	},
 	// 12
 	function() {
@@ -501,14 +555,14 @@ function RESET() {
 	}
 
 	createTable();
-
+	setDatatableText("Optional Datafield.");
+	setDatatableNum("?");
+	setCycleTime(50);
 	updateChances();
 	disableInfections();
 	cycleFunction = function(){};
 	resetDatasets();
 	loadScene(currentScenario);
-	// let midPerson = Math.floor(LEN / 2); 
-	// MAIN[midPerson][midPerson] = INFECTION[0].VALUE;
 	resetDataTable();
 	drawTable();
 }
@@ -1224,6 +1278,7 @@ function declareChart() {
 		},
 
 		legend: {
+			fontColor: "#CCC",
 			verticalAlign: "bottom",
 			horizontalAlign: "middle",
 			dockInsidePlotArea: false,
@@ -1312,13 +1367,15 @@ function updateChart() {
 			shiftAllDPS();
 
 		for(let i = 0; i < INFECTION.length; i++) {
-			INFECTION[i].dps.push({
-				x: CYCLE,
-				y: countInfectedByValue(INFECTION[i].VALUE)
-			});
+			if(INFECTION[i].ENABLED) {
+				INFECTION[i].dps.push({
+					x: CYCLE,
+					y: countInfectedByValue(INFECTION[i].VALUE)
+				});
 
-			if (INFECTION[i].dps.length > dataLength) {
-				INFECTION[i].dps.shift();
+				if (INFECTION[i].dps.length > dataLength) {
+					INFECTION[i].dps.shift();
+				}
 			}
 		}
 
@@ -1361,7 +1418,6 @@ function updateChart() {
 	if (dedprdps.length > dataLength) {
 		dedprdps.shift();
 	}
-
 	chart.render();
 }
 
@@ -1407,7 +1463,7 @@ function loadScene(sceneCode){
 	notFirstTime = false;
 	createTable();
 	drawTable();
-	document.getElementById("scenarioName").innerHTML = "&#8805;  Scenario " + sceneCode;
+	document.getElementById("scenarioName").innerHTML = "&#8805;  Scenario " + sceneCode + " : " + sceneTitle;
 	document.getElementById("description").innerHTML = sceneDescription;
 	// updateSliderValue();
 	declareChart();
@@ -1461,6 +1517,12 @@ function calculateAverageInfectedByPercentageForCycleCount(CYCLECOUNT, PERCENTAG
 	return (infectionCount / repeat);
 }
 
+function setCycleTime(CT) {
+	document.getElementById("timeSlider").value = CT;
+	document.getElementById("cycleTime").innerHTML = CT + "ms";
+	cycleDelay = CT;
+}
+
 function updateCycleTime() {
 	let newCycleTime = document.getElementById("timeSlider").value;
 	cycleDelay = newCycleTime;
@@ -1478,4 +1540,21 @@ function resetBoundingBox() {
 	// let newHeight = rect.y + window.pageYOffset + rect.height + 10;
 	// document.getElementById("boundingBox").style.height = newHeight + "px";
 	// document.getElementById("containerBox").style.height = Math.floor(1080 * 1080 / newHeight) + "px";
+}
+
+function setDatatableNum(text) {
+	document.getElementById("cycleFuncNum").innerHTML = text;
+}
+
+function setDatatableText(text) {
+	document.getElementById("cycleFuncText").innerHTML = text;
+}
+
+function clearTableFromInfections() {
+	for(let i = 0; i < LEN; i++) {
+		for(let j = 0; j < LEN; j++) {
+			if(isInfected(i, j))
+				MAIN[i][j] = SUS;
+		}
+	}
 }

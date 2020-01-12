@@ -21,13 +21,13 @@
 
 				<div class="container" id="descContainer">
 					<div style="margin:0.5%; height: 100%;">
-						<div class="scenarioDesc" id="description" style="height: 110px; overflow: auto;"></div>
+						<div class="scenarioDesc" id="description" style="height: 150px; overflow: auto;"></div>
 					</div>
 				</div>	
 
 
 				<div class="container" id="container3">
-					<div id="buttons1" style="width: 30%; height: 100%;">
+					<div id="buttons1" style="width: 350px; height: 100%;">
 						<button id="scenarioButton" type="button" name="getVal" onclick="previousScenario()">&lt; Previous Scenario</button> 
 						<button id="scenarioButton" type="button" name="getVal" onclick="nextScenario()">Next Scenario &gt;</button> 
 					</div>
@@ -51,11 +51,11 @@
 
 
 				<div class="container" id="container4">
-					<div id="chartsContainer" style="width: 30%;">
+					<div id="tableChartContainer">
 						<div style="width: 100%; border:2px solid #333;" id="tableDiv"><table id = 'mainTABLE'> </table> </div>
 					</div>
 
-					<div class="chart" id="chartContainer" style="border:2px solid #333; background-color: #0c0c0c; width: 67%; height: 100%;">
+					<div id="chartContainer">
 					</div>
 				</div>
 
@@ -75,6 +75,10 @@
 						<span class="dataDesc">Infected Percentage</span>
 					</div>
 
+					<div class="dataDiv" id="cycleFuncDiv">
+						<span class="dataNum" id="cycleFuncNum">?</span><br>
+						<span class="dataDesc" id="cycleFuncText"></span>
+					</div>
 				</div>
 
 				
