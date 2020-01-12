@@ -1,6 +1,6 @@
 "use strict";
 
-let currentScenario = 10;
+let currentScenario = 0;
 let dataLength = 200;
 let drawCellBorder = false;
 
@@ -330,9 +330,10 @@ let SCENES = [
 	},
 	// 10
 	function() {
-		loadScenario(61, 0);
+		loadScenario(101, 0);
 		// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
-		setInfectionValues(0, 0.4, 0.5, true, 0.0001, 0.4, 0.1, 0.004);
+		setInfectionValues(0, 0.3, 0.4, true, 0.0002, 0.3, 0.1, 0.004);
+		setInfectionByRadius(50, 50, 3, INFECTION[0].VALUE);
 		
 	},
 	// 11
@@ -879,12 +880,7 @@ function decideFate(m, n) {
  	// INFECTION EVOLUTION
 	if(INFECTION[tempType].EVOLUTION_CHANCE > Math.random()) {
 		SCND[m][n] = INFECTION[tempType + 1].VALUE;
-		INFECTION[tempType + 1].ENABLED = true;
-		INFECTION[tempType + 1].SPAR = INFECTION[tempType].SPAR * 1.5;
-		INFECTION[tempType + 1].INFECTION_CHANCE = INFECTION[tempType].INFECTION_CHANCE * 1.5;
-		INFECTION[tempType + 1].EVOLUTION_CHANCE = INFECTION[tempType].EVOLUTION_CHANCE * 0.5;
-		INFECTION[tempType + 1].REINFECTION_CHANCE = INFECTION[tempType].REINFECTION_CHANCE * 1.5;
-		// chart.Data[tempType + 1].showInLegend = true;
+		setInfectionValues(tempType + 1, INFECTION[tempType].INFECTION_CHANCE * 1.5, INFECTION[tempType].SPAR * 1.5, true, INFECTION[tempType].EVOLUTION_CHANCE * 0.5, INFECTION[tempType].REINFECTION_CHANCE * 1.5, INFECTION[tempType].DEATH_CHANCE * 1.5, INFECTION[tempType].RECOVERY_CHANCE * 0.5)
 		return;
 	}
 
