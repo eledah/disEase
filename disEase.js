@@ -1,18 +1,27 @@
 "use strict";
 
-let currentScenario = 0;
+let currentScenario = 1;
 let dataLength = 200;
 let drawCellBorder = false;
+let drawChart = true;
+let drawGraphics = true;
 
 // States
 const SUS = 0;
 const DED = 2;
 const IMM = 3;
 
+// Evolution Multipliers
+const EVO_INF = 1.1;
+const EVO_REINF = 1.1;
+const EVO_SPAR = 1.1;
+const EVO_DEATH = 1.1;
+const EVO_EVO = 1;
+const EVO_REC = 0.5;
+
 // Array Properties
 let LEN = 70;
 let DEGREE = 4;
-
 
 // Cycle Properties
 let CYCLE = 0;
@@ -22,7 +31,6 @@ let cancelCode;
 let pauseState = 0;
 let runState = 0;
 let notFirstTime = false;
-
 
 // Arrays
 let MAIN;
@@ -41,14 +49,14 @@ let heatVision = false;
 let sceneTitle = "";
 let sceneDescription = "";
 
+// Scenarios
 let SCENES = [ 
 	// 0
 	// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
 	function() {
 		loadScenario(61, 0.3);
 		setInfectionValues(0, 1, 0, true, 0, 0, 1, 0);
-		
-		initialInfectWith(0, 0, INFECTION[0].VALUE);
+		setInfection(0, 0, INFECTION[0].VALUE);
 
 		sceneTitle = "What is this all about?"
 		sceneDescription = "disEase.js is a simple model, which tries to shed some light on how <i>infectious pieces of information</i> (such as physical diseases, mental diseases and rumors) "
@@ -65,7 +73,7 @@ let SCENES = [
 	function () {
 		loadScenario(31, 0);
 		setInfectionValues(0, 1, 0, true, 0, 0, 1, 0);
-		initialInfectWith(15, 15, INFECTION[0].VALUE);
+		setInfection(15, 15, INFECTION[0].VALUE);
 		setCycleTime(150);
 		sceneTitle = "SIR Model."
 		sceneDescription = "This is the simplest model possible. Each person is surrounded by four neighbours. (Except for those on the corners)"
@@ -78,7 +86,7 @@ let SCENES = [
 	function() {
 		loadScenario(21, 0);
 		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0.5, 0);
-		initialInfectWith(10, 10, INFECTION[0].VALUE);
+		setInfection(10, 10, INFECTION[0].VALUE);
 
 		cycleFunction = function() {
 			setDatatableNum(countDead());
@@ -97,7 +105,7 @@ let SCENES = [
 		loadScenario(31, 0.01);
 		setInfectionValues(0, 0.75, 0, true, 0, 0.75, 0.1, 0);
 		INFECTION[4].ENABLED = true;
-		initialInfectWith(Math.floor(Math.random() * LEN), Math.floor(Math.random() * LEN), INFECTION[0].VALUE);
+		setInfection(Math.floor(Math.random() * LEN), Math.floor(Math.random() * LEN), INFECTION[0].VALUE);
 		
 		cycleFunction = function() {
 			if(countDead() > 10) {
@@ -175,7 +183,6 @@ let SCENES = [
 				INFECTION[0].REINFECTION_CHANCE -= 0.02;
 				INFECTION[0].SPAR -= 0.5;
 			}
-			// updateSliderValue();
 		}
 		sceneTitle = "The Cycle of Life."
 		sceneDescription = "Why would anyone care about the suicide victims of 2013? We're well past that. Why would we care about forest fires that happened two weeks ago? "
@@ -252,11 +259,17 @@ let SCENES = [
 		setInfectionValues(1, 0.2, 2, true, 0, 0.2, 0, 0.00005);
 		setInfectionValues(2, 0.2, 2, true, 0, 0.2, 0, 0.00001);
 
+		setDegreesByRandom(0.010, 5);
+		setDegreesByRandom(0.008, 6);
+		setDegreesByRandom(0.006, 7);
+		setDegreesByRandom(0.004, 8);
+		
+
 		INFECTION[4].ENABLED = true;
 		INFECTION[4].SPAR = 0.002;
 		INFECTION[4].INFECTION_CHANCE = 0;
 
-		initialInfectWith(25, 25, SUS);
+		setInfection(25, 25, SUS);
 
 		let changeValue = 0.012;
 		let bottomInfection = 0;
@@ -332,8 +345,12 @@ let SCENES = [
 	function() {
 		loadScenario(101, 0);
 		// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
-		setInfectionValues(0, 0.3, 0.4, true, 0.0002, 0.3, 0.1, 0.004);
-		setInfectionByRadius(50, 50, 3, INFECTION[0].VALUE);
+		setInfectionValues(0, 0.3, 0, true, 0.002, 0.3, 0.1, 0.004);
+		setInfectionByRadius(50, 50, 5, INFECTION[0].VALUE);
+		setDegreesByRandom(0.010, 5);
+		setDegreesByRandom(0.008, 6);
+		setDegreesByRandom(0.006, 7);
+		setDegreesByRandom(0.004, 8);
 		
 	},
 	// 11
@@ -391,8 +408,9 @@ let SCENES = [
 	},
 	// 12
 	function() {
-		// loadScenario(35, 0.01);
-		// setInfectionValues(0, 0.4, 10, true, 0, 0.2, 0.5, 0);
+
+		loadScenario(35, 0.01);
+		setInfectionValues(0, 0.4, 10, true, 0, 0.2, 0.5, 0);
 		// setInfectionValues(2, 1, 2, false, 0, 0.2, 1, 0);
 		// cycleFunction = function() {
 		// 	if(CYCLE == 24) {
@@ -404,8 +422,9 @@ let SCENES = [
 	},
 	// 13
 	function() {
-		// loadScenario(120, 0.04);
+		loadScenario(120, 0.04);
 
+		setInfectionValues(0, 0.4, 1, true, 0, 0.2, 0.4, 0);
 		// // setDegreeByRadius(25, 25, 15, 5);
 		// // setDegreeByRadius(25, 25, 7, 6);
 		// // setDegreeByRadius(25, 25, 3, 7);
@@ -446,6 +465,73 @@ let SCENES = [
 		// 		INFECTION[2].POWER = 1;
 		// 	}
 		// }
+	},
+	// 14
+	function() {
+		loadScenario(75, 0.01);
+		// First Circle
+		setDegreeByRadius(25, 25, 10, 5);
+		setDegreeByRadius(25, 25, 7, 6);
+		setDegreeByRadius(25, 25, 5, 7);
+		setDegreeByRadius(25, 25, 3, 8);
+
+		// Second Circle
+		setDegreeByRadius(50, 50, 12, 5);
+		setDegreeByRadius(50, 50, 10, 6);
+		setDegreeByRadius(50, 50, 7, 7);
+		setDegreeByRadius(50, 50, 4, 8);
+
+		setInfectionValues(0, 0.27, 0.3, true, 0, 0.27, 0, 0);
+
+		dataLength = 400;
+		cycleFunction = function() {
+			if(CYCLE == 150)
+				setInfectionValues(0, 0.24, 0, true, 0, 0.24, 0, 0);
+			if(CYCLE == 300)
+				setInfectionValues(0, 0.30, 0.3, true, 0, 0.30, 0, 0);
+			
+		}
+	},
+	// 15
+	function() {
+		loadScenario(70, 0.005);
+		setInfectionValues(0, 0.25, 0.1, true, 0, 0.25, 0, 0);
+		
+		dataLength = 500;
+		cycleFunction = function() {
+			if(CYCLE == 250) {
+				for(let i = 0; i < 70; i++) {
+					setDegree(i, 35, 7);
+					setDegree(i, 36, 6);
+					setDegree(i, 34, 6);
+					setDegree(i, 37, 5);
+					setDegree(i, 33, 5);
+				}
+			}
+		}
+	},
+	// 16
+	function() {
+		loadScenario(50, 0);
+		setInfectionValues(0, 0.27, 0, true, 0, 0.27, 0, 0);
+
+		for(let i = 0; i < 50; i++)
+			setInfection(i, 0, INFECTION[0].VALUE);
+
+		for(let i = 0; i < 50; i++){
+			setInfection(10, i, INFECTION[4].VALUE);
+			setInfection(20, i, INFECTION[4].VALUE);
+			setInfection(30, i, INFECTION[4].VALUE);
+			setInfection(40, i, INFECTION[4].VALUE);
+			for(let j = 0; j <= 9; j++) {
+				setDegree(j, i, 4);
+				setDegree(j + 10, i, 5);
+				setDegree(j + 20, i, 6);
+				setDegree(j + 30, i, 7);
+				setDegree(j + 40, i, 8);
+			}
+		}
+		
 	}
 ]
 
@@ -461,61 +547,46 @@ let INFECTION_3 = {ID: 3, VALUE: 1.3, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#FFA
 // Infectious Immunities
 let IMMUNITY_0 = {ID: 100, VALUE: 3, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#8CF4FF", ENABLED: false, dps: [], immunityCHANCE: 0.005}
 
-
 let INFECTION = [INFECTION_0, INFECTION_1, INFECTION_2, INFECTION_3, IMMUNITY_0];
+let IMMUNITY = [IMMUNITY_0];
 
 const PAUSED = 1;
 const UNPAUSED = 0;
-
 const RUNNING = 1;
 
-
 // COLORS
-// const COLOR_DEAD = "#B0BEC5";
 const COLOR_DEAD = "grey";
 const COLOR_IMMUNE = "#B3E5FC";
-const COLOR_INFECTED = "#EC407A";
-	// TYPES
-	const COLOR_INFECTED_2 = "#AB47BC";
-	const COLOR_INFECTED_3 = "#66BB6A";
-	const COLOR_INFECTED_4 = "#FFA726";
 const COLOR_SUSCEPTIBLE = "#0d0d0d";
-	// Degrees
-	const COLOR_SUSCEPTIBLE_5 = "1a1a1a";
-	const COLOR_SUSCEPTIBLE_6 = "262626";
-	const COLOR_SUSCEPTIBLE_7 = "333333";
-	const COLOR_SUSCEPTIBLE_8 = "404040";
+// Degrees
+const COLOR_SUSCEPTIBLE_5 = "1a1a1a";
+const COLOR_SUSCEPTIBLE_6 = "262626";
+const COLOR_SUSCEPTIBLE_7 = "333333";
+const COLOR_SUSCEPTIBLE_8 = "404040";
 
 
 // Chart Declaration
 let mainChart; 
 let chart;
 let averageInfected = 0;
-	let infdps = [];
-	let immdps = [];
-	let deddps = [];
-	let susdps = [];
-	let avginfdps = [];
-
-	let dedprdps = [];
-	let deadThisRound = 0;
-// declareChart();
-
-let functionNames = [
-	"SIMPLE SIR"	
-];
+// Chart Datasets
+let infdps = [];
+let immdps = [];
+let deddps = [];
+let susdps = [];
+let avginfdps = [];
+let dedprdps = [];
+let deadThisRound = 0;
 
 let cycleFunction = function(){};
 
-// cycleFunction();
-
-// console.log(SCENES[0]);
 loadScene(currentScenario);
 drawTable();
 
 // calculateAverageInfected();
 
 
+// Main Functions
 function INITIALIZE() {
 	cycleDelay = document.getElementById("timeSlider").value;
 
@@ -534,7 +605,6 @@ function INITIALIZE() {
 			drawTable();
 	}
 
-	// updateModels();
 	notFirstTime = true;
 	
 	cancelCode = setInterval(advanceCycle, cycleDelay);
@@ -559,7 +629,6 @@ function RESET() {
 	setDatatableText("Optional Datafield.");
 	setDatatableNum("?");
 	setCycleTime(50);
-	updateChances();
 	disableInfections();
 	cycleFunction = function(){};
 	resetDatasets();
@@ -581,6 +650,22 @@ function resetDatasets() {
 	declareChart();
 }
 
+function STEP() {
+	PAUSE();
+	advanceCycle();
+}
+
+function PAUSE() {
+	pauseState = PAUSED;
+	clearInterval(cancelCode);
+}
+
+function isPaused() {
+	if(pauseState == PAUSED)
+		return true;
+	return false;
+}
+
 function disableInfections() {
 	for(let i = 0; i < INFECTION.length; i++){
 		INFECTION[i].SPAR = 0;
@@ -591,68 +676,6 @@ function disableInfections() {
 		INFECTION[i].REINFECTION_CHANCE = 0;
 	}
 }
-
-function STEP() {
-	resetBoundingBox();
-	Pause();
-	advanceCycle();
-}
-
-function Pause() {
-	pauseState = PAUSED;
-	clearInterval(cancelCode);
-	updateChances();
-}
-
-function isPaused() {
-	if(pauseState == PAUSED)
-		return true;
-	return false;
-}
-
-function updateChances() {
-	// INFECTION[0].INFECTION_CHANCE = document.getElementById("infectionCHANCE").value / 100;
-	// INFECTION[4].immunityCHANCE = document.getElementById("immunityCHANCE").value / 100;
-	// INFECTION[0].SPAR = document.getElementById("spAR").value / 100;
-
-	// updateSliderValue();
-}
-
-function updateDataTable() {
-	let infectedNum = countInfected();
-	document.getElementById("healthyNum").innerHTML = countSusceptible();
-	document.getElementById("infectedNum").innerHTML = infectedNum;
-	document.getElementById("infectedPercentage").innerHTML = Math.floor((infectedNum / (LEN * LEN)) * 100) + "%";
-}
-
-function resetDataTable() {
-	document.getElementById("healthyNum").innerHTML = "?";
-	document.getElementById("infectedNum").innerHTML = "?";
-	document.getElementById("infectedPercentage").innerHTML = "?";
-}
-
-function updateSliderValue() {
-	// document.getElementById("infLable").innerHTML = " " + INFECTION[0].INFECTION_CHANCE * 100 + "%"
-	// document.getElementById("immLable").innerHTML = " " + INFECTION[4].immunityCHANCE * 100 + "%"
-	// document.getElementById("spARLable").innerHTML = " " + INFECTION[0].SPAR * 100 + "%"
-
-	// document.getElementById("infectionCHANCE").value = INFECTION[0].INFECTION_CHANCE * 100;
-	// document.getElementById("immunityCHANCE").value = INFECTION[4].immunityCHANCE * 100;
-	// document.getElementById("spAR").value = INFECTION[0].SPAR * 100;
-
-}
-
-/*function updateModels() {
-	// Model Selection
-	if(document.getElementById("SISRADIO").checked) {
-		// SIS MODEL
-		deathCHANCE = 0;
-	}
-	if(document.getElementById("SIRRADIO").checked) {
-		// SIR MODEL 
-		deathCHANCE = 1;
-	}
-}*/
 
 function IMMUNIZE() {
 	for(let i = 0; i < MAIN.length; i++) {
@@ -682,273 +705,53 @@ function createTable() {
 	}
 }
 
+function advanceCycle() {
+	let deathCount = 0;
+	CYCLE++;
+	// console.log("CYCLE: " + CYCLE);
 
-function getCellColor(r, c) {
-	let bgColor = "#0c0c0c";
-	if(isInfected(r, c)){
-		bgColor = INFECTION[getInfectionTypeByValue(MAIN[r][c])].COLOR;
-	}
-	if(isDead(r, c)) {
-		let realValue = ((MAIN[r][c] * 10) - 10) / 10;
-		bgColor = INFECTION[getInfectionTypeByValue(realValue)].DEATH_COLOR;
-	}
-	switch(MAIN[r][c]) {
-		case SUS:
-			switch(DEG[r][c]) {
-				case 4:
-					bgColor = COLOR_SUSCEPTIBLE;
-					break;
-				case 5:
-					bgColor = COLOR_SUSCEPTIBLE_5;
-					break;
-				case 6:
-					bgColor = COLOR_SUSCEPTIBLE_6;
-					break;
-				case 7:
-					bgColor = COLOR_SUSCEPTIBLE_7;
-					break;
-				case 8:
-					bgColor = COLOR_SUSCEPTIBLE_8;
-					break;
-			}
-			break;
-		case IMM:
-			bgColor = COLOR_IMMUNE;
-			break;
-		default:
-			break;
-	}
-	return bgColor;
-}
-
-function drawTable() {
-	let gTable = document.getElementById("mainTABLE");
-	for(let r = 0; r < LEN; r++) {
-		for(let c = 0; c < LEN; c++) {
-			gTable.rows[r].cells[c].bgColor = getCellColor(r, c);
+	for(let p = 0; p < INFECTION.length; p++) {
+		if(INFECTION[p].ENABLED && INFECTION[p].SPAR > 0){
+			spawnSpontaneousInfection(p);
 		}
 	}
-}
 
-
-function isSusceptible(m, n) {
-	if(MAIN[m][n] == SUS)
-		return true;
-	else
-		return false;
-}
-
-function getInfectionTypeByID(ID) {
-	return ID;
-}
-
-function getInfectionTypeByValue(VALUE) {
-	for(let i = 0; i < INFECTION.length; i++) {
-		if(INFECTION[i].VALUE == VALUE){
-			return i;
-		}
-	}
-}
-
-function isDead(m, n) {
-	if(MAIN[m][n] >= 2 && MAIN[m][n] < 3)
-		return true;
-	return false;
-}
-
-function isInfected(m, n) {
-	if(MAIN[m][n] >= INFECTION[0].VALUE && MAIN[m][n] <= INFECTION[INFECTION.length - 2].VALUE)
-		return true;
-	else
-		return false;
-}
-
-function isImmune(m, n) {
-	if(MAIN[m][n] == IMM)
-		return true;
-	else
-		return false;
-}
-
-function infectWith(m, n, infectionValue) {
-	let infectionID = getInfectionTypeByValue(infectionValue);
-	if(Math.random() < INFECTION[infectionID].INFECTION_CHANCE){
-		if(isSusceptible(m, n)){
-			SCND[m][n] = infectionValue;
-		}else if(isInfected(m, n) && INFECTION[infectionID].POWER > INFECTION[getInfectionTypeByValue(getState(m, n))].POWER){
-			SCND[m][n] = infectionValue;
-		}
-	}
-}
-
-function getState(m, n) {
-	return MAIN[m][n];
-}
-
-function setState(m, n, STATE) {
-	MAIN[m][n] = STATE;
-}
-
-function increaseInfectionDuration(i, j, k) {
-	INFECTION_STATE[i][j][k]++;
-}
-
-function decreaseInfectionDuration(i, j, k) {
-	INFECTION_STATE[i][j][k]--;
-}
-
-function resetInfectionDuration(i, j, k) {
-	INFECTION_STATE[i][j][k] = 0;
-}
-
-function setMaxHeat() {
-	maxHeat = 0;
-	for(let r = 0; r < LEN; r++) {
-		for(let c = 0; c < LEN; c++) {
-			if(timesInfected[r][c] > maxHeat) {
-				maxHeat = timesInfected[r][c];
-			}
-		}
-	}
-}
-
-function getHeatmapColor(m, n) {
-	let cellHeat = timesInfected[m][n];
-	if(cellHeat == 0)
-		return "#FFFFFF"; 
-	if(cellHeat > 0 && cellHeat <= maxHeat / 4)
-		return "#ffcdd2";
-	if(cellHeat > maxHeat / 4 && cellHeat <= maxHeat / 2)
-		return "#e57373";
-	if(cellHeat > maxHeat / 2 && cellHeat <= 3 * maxHeat / 4)
-		return "#f44336";
-	if(cellHeat > 3 * maxHeat / 4 && cellHeat <= maxHeat)
-		return "#d32f2f";
-}
-
-function drawHeatMap() {
-	let gTable = document.getElementById("mainTABLE");
-	setMaxHeat();
-	for(let r = 0; r < LEN; r++) {
-		for(let c = 0; c < LEN; c++) {
-			gTable.rows[r].cells[c].bgColor = getHeatmapColor(r, c);
-		}
-	}
-	// console.log(timesInfected);
-	// console.log(maxHeat);
-}
-
-function toggleHeatVision() {
-	if(heatVision) {
-		heatVision = false;
-		drawTable();
-	}
-	else {
-		heatVision = true;
-		drawHeatMap();
-	}
-}
-
-function recoverFromInfection(m, n, infectionValue) {
-	// console.log(m + " " + n + " " + infectionType + " " + getInfectionTypeByValue(infectionType) + " " + INFECTION[0].INFECTION_CHANCE);
-	if(Math.random() < INFECTION[getInfectionTypeByValue(infectionValue)].REINFECTION_CHANCE){
-		SCND[m][n] = infectionValue;
-		timesInfected[m][n]++;
-	} else {
-		SCND[m][n] = SUS;
-	}
-}
-
-function decideFate(m, n) {
-	let tempType = getInfectionTypeByValue(MAIN[m][n]);
-
- 	// DEATH
- 	if(Math.random() < INFECTION[tempType].DEATH_CHANCE){
-		SCND[m][n] = DED + (INFECTION[tempType].VALUE - 1);
-		deadThisRound++;
-		// resetInfectionDuration(m, n, tempType);
-		return;
- 	}
-
- 	// IMMUNITY
- 	if(Math.random() < INFECTION[tempType].RECOVERY_CHANCE){
-		SCND[m][n] = INFECTION[4].VALUE;
-		// resetInfectionDuration(m, n, tempType);
-		return;
- 	}
-
- 	// INFECTION EVOLUTION
-	if(INFECTION[tempType].EVOLUTION_CHANCE > Math.random()) {
-		SCND[m][n] = INFECTION[tempType + 1].VALUE;
-		setInfectionValues(tempType + 1, INFECTION[tempType].INFECTION_CHANCE * 1.5, INFECTION[tempType].SPAR * 1.5, true, INFECTION[tempType].EVOLUTION_CHANCE * 0.5, INFECTION[tempType].REINFECTION_CHANCE * 1.5, INFECTION[tempType].DEATH_CHANCE * 1.5, INFECTION[tempType].RECOVERY_CHANCE * 0.5)
-		return;
-	}
-
-	recoverFromInfection(m, n, SCND[m][n]);
-}
-
-function spawnInfection(infectionID) {
-	let rand;
-	AllSUS = [];
 	for(let i = 0; i < LEN; i++) {
 		for(let j = 0; j < LEN; j++) {
-			if(isSusceptible(i, j)) {
-				AllSUS.push({
-					x: i,
-					y: j
-				});
-			}
-		}	
+			SCND[i][j] = MAIN[i][j];
+		}
 	}
+	// console.time('resolveTable');
+	resolveTable();
+	// console.timeEnd('resolveTable');
 
-	let spontaneousAR = INFECTION[infectionID].SPAR; 
-	while(spontaneousAR > Math.random()) {
-		rand = Math.floor(Math.random() * (AllSUS.length));
-		// console.log(rand);
-		// console.log(AllSUS);
-		initialInfectWith(AllSUS[rand].x, AllSUS[rand].y, INFECTION[infectionID].VALUE);
-		AllSUS.splice(rand, 1);
-		spontaneousAR--;
+	// console.time('cycleFunction');
+	cycleFunction();
+	// console.timeEnd('cycleFunction');
+
+	// console.time('countInfectedUntilNow');
+	countInfectedUntilNow();
+	// console.timeEnd('countInfectedUntilNow');
+
+	// console.time('drawTable');
+	if(drawGraphics) {
+		if(heatVision)
+			drawHeatMap();
+		else
+			drawTable();
 	}
-}
+	// console.timeEnd('drawTable');
 
-function isInTable(m, n) {
-	if(m >= 0 && n >= 0 && m < LEN && n < LEN)
-		return true;
-	return false;
-}
+	// console.time('updateChart');
+	if(drawChart)
+		updateChart();
+	// console.timeEnd('updateChart');
 
-function oneToFourRand() {
-	let rand = Math.floor(Math.random() * 4) + 1;
-	return rand;
-}
+	// console.time('updateDataTable');
+	updateDataTable();
+	// console.timeEnd('updateDataTable');
 
-function infectDIRWith(m, n, d, infectionType) {
-	switch(d) {
-		case 1:
-			if(isInTable(m - 1, n - 1))
-				infectWith(m - 1, n - 1, infectionType);
-			break;
-		case 2:
-			if(isInTable(m - 1, n + 1))
-				infectWith(m - 1, n + 1, infectionType);
-			break;
-		case 3:
-			if(isInTable(m + 1, n - 1))
-				infectWith(m + 1, n - 1, infectionType);
-			break;
-		case 4:
-			if(isInTable(m + 1, n + 1))
-				infectWith(m + 1, n + 1, infectionType);
-			break;
-	}
-}
-
-function getIdByValue(infectionValue) {
-	for(let i = 0; i < INFECTION.length - 1; i++){
-		if(INFECTION[i].VALUE == infectionValue)
-			return i;
-	}
+	deadThisRound = 0;
 }
 
 function resolveTable() {
@@ -956,7 +759,7 @@ function resolveTable() {
 		for(let j = 0; j < LEN; j++) {
 			// INFECTED CELL
 			if(isInfected(i, j)) {
-				let cellState = getState(i, j);
+				let cellState = getValue(i, j);
 				// UP
 				if(isInTable(i - 1, j)) {
 					// infect(i - 1, j);
@@ -1021,115 +824,366 @@ function resolveTable() {
 	return;
 }
 
-function advanceCycle() {
-	let deathCount = 0;
-	CYCLE++;
-	// console.log("CYCLE: " + CYCLE);
+function setCycleTime(CT) {
+	document.getElementById("timeSlider").value = CT;
+	document.getElementById("cycleTime").innerHTML = CT + "ms";
+	cycleDelay = CT;
+}
 
-	for(let p = 0; p < INFECTION.length; p++) {
-		if(INFECTION[p].ENABLED && INFECTION[p].SPAR > 0){
-			spawnInfection(p);
+function updateCycleTime() {
+	let newCycleTime = document.getElementById("timeSlider").value;
+	cycleDelay = newCycleTime;
+	document.getElementById("cycleTime").innerHTML = newCycleTime + "ms";
+	if(runState == RUNNING) {
+		clearInterval(cancelCode);
+		cancelCode = setInterval(advanceCycle, newCycleTime);
+	}
+}
+
+// Scenario Functions
+function loadScenario(tableLength, immC) {
+	LEN = tableLength;
+	INFECTION[4].immunityCHANCE = immC;
+
+	MAIN = createArray(LEN, LEN);
+	SCND = createArray(LEN, LEN);
+	DEG = createArray(LEN, LEN);
+	//HeatMap
+	timesInfected = createArray(LEN, LEN);
+
+	INFECTION_STATE = createArray(INFECTION.length - 1, LEN, LEN);
+
+	for(let x = 0; x < LEN; x++) {
+		for(let y = 0; y < LEN; y++) {
+			MAIN[x][y] = 0;
+			SCND[x][y] = 0;
+			DEG[x][y] = 4;
+			timesInfected[x][y] = 0;
 		}
 	}
+	IMMUNIZE();
+}
 
+function loadScene(sceneCode) {
+	SCENES[sceneCode]();
+	notFirstTime = false;
+	createTable();
+	drawTable();
+	document.getElementById("scenarioName").innerHTML = "&#8805;  Scenario " + sceneCode + " : " + sceneTitle;
+	document.getElementById("description").innerHTML = sceneDescription;
+	declareChart();
+}
+
+function previousScenario() {
+	if(currentScenario > 0) {
+		currentScenario--;
+		RESET();
+		loadScene(currentScenario);
+
+	}
+}
+
+function nextScenario() {
+	if(currentScenario < SCENES.length - 1) {
+		currentScenario++;
+		RESET();
+		loadScene(currentScenario);
+	}
+}
+
+// Datatable Functions
+function updateDataTable() {
+	let infectedNum = countInfected();
+	document.getElementById("healthyNum").innerHTML = countSusceptible();
+	document.getElementById("infectedNum").innerHTML = infectedNum;
+	document.getElementById("infectedPercentage").innerHTML = Math.floor((infectedNum / (LEN * LEN)) * 100) + "%";
+}
+
+function resetDataTable() {
+	document.getElementById("healthyNum").innerHTML = "?";
+	document.getElementById("infectedNum").innerHTML = "?";
+	document.getElementById("infectedPercentage").innerHTML = "?";
+}
+
+function setDatatableNum(text) {
+	document.getElementById("cycleFuncNum").innerHTML = text;
+}
+
+function setDatatableText(text) {
+	document.getElementById("cycleFuncText").innerHTML = text;
+}
+
+// Table functions
+function drawTable() {
+	let gTable = document.getElementById("mainTABLE");
+	for(let r = 0; r < LEN; r++) {
+		for(let c = 0; c < LEN; c++) {
+			gTable.rows[r].cells[c].bgColor = getCellColor(r, c);
+		}
+	}
+}
+
+function getCellColor(r, c) {
+	let bgColor = "#0c0c0c";
+	if(isInfected(r, c)){
+		bgColor = INFECTION[getIDbyValue(MAIN[r][c])].COLOR;
+	}
+	if(isDead(r, c)) {
+		let realValue = ((MAIN[r][c] * 10) - 10) / 10;
+		bgColor = INFECTION[getIDbyValue(realValue)].DEATH_COLOR;
+	}
+	switch(MAIN[r][c]) {
+		case SUS:
+			switch(DEG[r][c]) {
+				case 4:
+					bgColor = COLOR_SUSCEPTIBLE;
+					break;
+				case 5:
+					bgColor = COLOR_SUSCEPTIBLE_5;
+					break;
+				case 6:
+					bgColor = COLOR_SUSCEPTIBLE_6;
+					break;
+				case 7:
+					bgColor = COLOR_SUSCEPTIBLE_7;
+					break;
+				case 8:
+					bgColor = COLOR_SUSCEPTIBLE_8;
+					break;
+			}
+			break;
+		case IMM:
+			bgColor = COLOR_IMMUNE;
+			break;
+		default:
+			break;
+	}
+	return bgColor;
+}
+
+function isInTable(m, n) {
+	if(m >= 0 && n >= 0 && m < LEN && n < LEN)
+		return true;
+	return false;
+}
+
+// Heatmap Functions
+function getHeatmapColor(m, n) {
+	let cellHeat = timesInfected[m][n];
+	if(cellHeat == 0)
+		return "#FFFFFF"; 
+	if(cellHeat > 0 && cellHeat <= maxHeat / 4)
+		return "#ffcdd2";
+	if(cellHeat > maxHeat / 4 && cellHeat <= maxHeat / 2)
+		return "#e57373";
+	if(cellHeat > maxHeat / 2 && cellHeat <= 3 * maxHeat / 4)
+		return "#f44336";
+	if(cellHeat > 3 * maxHeat / 4 && cellHeat <= maxHeat)
+		return "#d32f2f";
+}
+
+function drawHeatMap() {
+	let gTable = document.getElementById("mainTABLE");
+	setMaxHeat();
+	for(let r = 0; r < LEN; r++) {
+		for(let c = 0; c < LEN; c++) {
+			gTable.rows[r].cells[c].bgColor = getHeatmapColor(r, c);
+		}
+	}
+}
+
+function setMaxHeat() {
+	maxHeat = 0;
+	for(let r = 0; r < LEN; r++) {
+		for(let c = 0; c < LEN; c++) {
+			if(timesInfected[r][c] > maxHeat) {
+				maxHeat = timesInfected[r][c];
+			}
+		}
+	}
+}
+
+function toggleHeatVision() {
+	if(heatVision) {
+		heatVision = false;
+		drawTable();
+	}
+	else {
+		heatVision = true;
+		drawHeatMap();
+	}
+}
+
+// Infection Functions
+function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE) {
+	INFECTION[infectionType].INFECTION_CHANCE = INF_CHANCE;
+	INFECTION[infectionType].SPAR = SPAR;
+	INFECTION[infectionType].ENABLED = STATUS;
+	INFECTION[infectionType].EVOLUTION_CHANCE = EVO_CHANCE;
+	INFECTION[infectionType].REINFECTION_CHANCE = REINF_CHANCE;
+	INFECTION[infectionType].DEATH_CHANCE = DED_CHANCE;
+	INFECTION[infectionType].RECOVERY_CHANCE = REC_CHANCE;
+}
+
+function infectWith(m, n, infectionValue) {
+	let infectionID = getIDbyValue(infectionValue);
+	if(Math.random() < INFECTION[infectionID].INFECTION_CHANCE){
+		if(isSusceptible(m, n)){
+			SCND[m][n] = infectionValue;
+		} else if(isInfected(m, n) && INFECTION[infectionID].POWER > INFECTION[getIDbyValue(getValue(m, n))].POWER){
+			SCND[m][n] = infectionValue;
+		}
+	}
+}
+
+function infectDIRWith(m, n, d, infectionValue) {
+	switch(d) {
+		case 1:
+			if(isInTable(m - 1, n - 1))
+				infectWith(m - 1, n - 1, infectionValue);
+			break;
+		case 2:
+			if(isInTable(m - 1, n + 1))
+				infectWith(m - 1, n + 1, infectionValue);
+			break;
+		case 3:
+			if(isInTable(m + 1, n - 1))
+				infectWith(m + 1, n - 1, infectionValue);
+			break;
+		case 4:
+			if(isInTable(m + 1, n + 1))
+				infectWith(m + 1, n + 1, infectionValue);
+			break;
+	}
+}
+
+function decideFate(m, n) {
+	let tempType = getIDbyValue(MAIN[m][n]);
+
+ 	// DEATH
+ 	if(Math.random() < INFECTION[tempType].DEATH_CHANCE){
+		SCND[m][n] = DED + (INFECTION[tempType].VALUE - 1);
+		deadThisRound++;
+		return;
+ 	}
+
+ 	// IMMUNITY
+ 	if(Math.random() < INFECTION[tempType].RECOVERY_CHANCE){
+		SCND[m][n] = INFECTION[4].VALUE;
+		return;
+ 	}
+
+ 	// INFECTION EVOLUTION
+	if(INFECTION[tempType].EVOLUTION_CHANCE > Math.random()) {
+		SCND[m][n] = INFECTION[tempType + 1].VALUE;
+		setInfectionValues(tempType + 1, INFECTION[tempType].INFECTION_CHANCE * EVO_INF, INFECTION[tempType].SPAR * EVO_SPAR, true, INFECTION[tempType].EVOLUTION_CHANCE * EVO_EVO, INFECTION[tempType].REINFECTION_CHANCE * EVO_REINF, INFECTION[tempType].DEATH_CHANCE * EVO_REINF, INFECTION[tempType].RECOVERY_CHANCE * EVO_REC)
+		return;
+	}
+
+	recoverFromInfection(m, n, SCND[m][n]);
+}
+
+function spawnSpontaneousInfection(infectionID) {
+	let rand;
+	AllSUS = [];
 	for(let i = 0; i < LEN; i++) {
 		for(let j = 0; j < LEN; j++) {
-			SCND[i][j] = MAIN[i][j];
+			if(isSusceptible(i, j)) {
+				AllSUS.push({
+					x: i,
+					y: j
+				});
+			}
+		}	
+	}
+
+	let SPAR = INFECTION[infectionID].SPAR; 
+	while(SPAR > Math.random()) {
+		rand = Math.floor(Math.random() * (AllSUS.length));
+		setInfection(AllSUS[rand].x, AllSUS[rand].y, INFECTION[infectionID].VALUE);
+		AllSUS.splice(rand, 1);
+		SPAR--;
+	}
+}
+
+function recoverFromInfection(m, n, infectionValue) {
+	// console.log(m + " " + n + " " + infectionType + " " + getIDbyValue(infectionType) + " " + INFECTION[0].INFECTION_CHANCE);
+	if(Math.random() < INFECTION[getIDbyValue(infectionValue)].REINFECTION_CHANCE){
+		SCND[m][n] = infectionValue;
+		timesInfected[m][n]++;
+	} else {
+		SCND[m][n] = SUS;
+	}
+}
+
+
+// set() Functions
+function setValue(m, n, STATE) {
+	MAIN[m][n] = STATE;
+}
+
+function setInfection(x, y, infectionValue) {
+	MAIN[x][y] = infectionValue;
+}
+
+function setInfectionByRadius(m, n, RADIUS, infectionValue) {
+	for(let i = 0; i < LEN; i++) {
+		for(let j = 0; j < LEN; j++){
+			if(Math.sqrt(Math.pow(i - m, 2) + Math.pow(j - n, 2)) < RADIUS)
+				MAIN[i][j] = infectionValue;
 		}
 	}
-	// console.time('resolveTable');
-	resolveTable();
-	// console.timeEnd('resolveTable');
+}
 
-	// console.time('cycleFunction');
-	cycleFunction();
-	// console.timeEnd('cycleFunction');
+function fillWithInfection(startingX, startingY, endingX, endingY, infectionValue) {
+	for(let i = startingX; i <= endingX; i++) {
+		for(let j = startingY; j <= endingY; j++){
+			MAIN[i][j] = infectionValue;
+		}
+	}
+}
 
-	// console.time('countInfectedUntilNow');
-	countInfectedUntilNow();
-	// console.timeEnd('countInfectedUntilNow');
-
-	// console.time('drawTable');
-	if(heatVision)
-		drawHeatMap();
+// is() Functions
+function isSusceptible(m, n) {
+	if(MAIN[m][n] == SUS)
+		return true;
 	else
-		drawTable();
-	// console.timeEnd('drawTable');
-
-	// console.time('updateChart');
-	updateChart();
-	// console.timeEnd('updateChart');
-
-	// console.time('updateDataTable');
-	updateDataTable();
-	// console.timeEnd('updateDataTable');
-
-	deadThisRound = 0;
+		return false;
 }
 
-function countInfectedUntilNow() {
-	averageInfected = (countInfected() + (CYCLE - 1) * averageInfected) / CYCLE;
-	// console.log(averageInfected);
+function isDead(m, n) {
+	if(MAIN[m][n] >= 2 && MAIN[m][n] < 3)
+		return true;
+	return false;
 }
 
-function createArray(length) {
-	var arr = new Array(length || 0),
-		i = length;
+function isInfected(m, n) {
+	if(MAIN[m][n] >= INFECTION[0].VALUE && MAIN[m][n] <= INFECTION[INFECTION.length - 2].VALUE)
+		return true;
+	else
+		return false;
+}
 
-	if (arguments.length > 1) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		while(i--) arr[length-1 - i] = createArray.apply(this, args);
+function isImmune(m, n) {
+	if(MAIN[m][n] == IMM)
+		return true;
+	else
+		return false;
+}
+
+// get() Functions
+function getValue(m, n) {
+	return MAIN[m][n];
+}
+
+function getIDbyValue(infectionValue) {
+	for(let i = 0; i < INFECTION.length; i++){
+		if(INFECTION[i].VALUE == infectionValue)
+			return i;
 	}
-
-		return arr;
 }
 
-// CHART DRAWING :DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
-
-function countInfected() {
-	let count = 0;
-	for(let i = 0; i < LEN; i++) {
-		for(let j = 0; j < LEN; j++){
-			if(MAIN[i][j] >= INFECTION[0].VALUE && MAIN[i][j] <= INFECTION[INFECTION.length - 2].VALUE)
-				count++;
-		}
-	}
-	return count;
-}
-
-function countInfectedByID(infectionID) {
-	let count = 0;
-	for(let i = 0; i < LEN; i++) {
-		for(let j = 0; j < LEN; j++){
-			if(MAIN[i][j] == INFECTION[getInfectionTypeByID(infectionID)].VALUE)
-				count++;
-		}
-	}
-	return count;
-}
-
-function countInfectedByValue(infectionValue) {
-	let count = 0;
-	for(let i = 0; i < LEN; i++) {
-		for(let j = 0; j < LEN; j++){
-			if(MAIN[i][j] == INFECTION[getInfectionTypeByValue(infectionValue)].VALUE)
-				count++;
-		}
-	}
-	return count;
-}
-
-function countSusceptible() {
-	let count = 0;
-	for(let i = 0; i < LEN; i++) {
-		for(let j = 0; j < LEN; j++){
-			if(MAIN[i][j] == SUS)
-				count++;
-		}
-	}
-	return count;
-}
-
+// Counter Functions
 function countDead() {
 	let count = 0;
 	for(let i = 0; i < LEN; i++) {
@@ -1152,99 +1206,78 @@ function countImmune() {
 	return count;
 }
 
-function setDegreeByRadius(m, n, RADIUS, DEGREE) {
+function countSusceptible() {
+	let count = 0;
 	for(let i = 0; i < LEN; i++) {
 		for(let j = 0; j < LEN; j++){
-			if(Math.sqrt(Math.pow(i - m, 2) + Math.pow(j - n, 2)) < RADIUS)
+			if(MAIN[i][j] == SUS)
+				count++;
+		}
+	}
+	return count;
+}
+
+function countInfected() {
+	let count = 0;
+	for(let i = 0; i < LEN; i++) {
+		for(let j = 0; j < LEN; j++){
+			if(MAIN[i][j] >= INFECTION[0].VALUE && MAIN[i][j] <= INFECTION[INFECTION.length - 2].VALUE)
+				count++;
+		}
+	}
+	return count;
+}
+
+function countInfectedByID(infectionID) {
+	let count = 0;
+	for(let i = 0; i < LEN; i++) {
+		for(let j = 0; j < LEN; j++){
+			if(MAIN[i][j] == INFECTION[infectionID].VALUE)
+				count++;
+		}
+	}
+	return count;
+}
+
+function countInfectedUntilNow() {
+	averageInfected = (countInfected() + (CYCLE - 1) * averageInfected) / CYCLE;
+}
+
+function countInfectedByValue(infectionValue) {
+	let count = 0;
+	for(let i = 0; i < LEN; i++) {
+		for(let j = 0; j < LEN; j++){
+			if(MAIN[i][j] == INFECTION[getIDbyValue(infectionValue)].VALUE)
+				count++;
+		}
+	}
+	return count;
+}
+
+// Degree Functions
+function setDegree(x, y, DEGREE) {
+	DEG[x][y] = DEGREE;
+}
+
+function setDegreesByRandom(CHANCE, DEGREE) {
+	for(let i = 0; i < LEN; i++) {
+		for(let j = 0; j < LEN; j++){
+			if(Math.random() < CHANCE)
 				DEG[i][j] = DEGREE;
 		}
 	}
 }
 
-function fillWithInfection(startingX, startingY, endingX, endingY, infectionValue) {
-	for(let i = startingX; i <= endingX; i++) {
-		for(let j = startingY; j <= endingY; j++){
-			MAIN[i][j] = infectionValue;
-		}
-	}
-}
-
-function setInfectionByRadius(m, n, RADIUS, infectionType) {
+function setDegreeByRadius(x, y, RADIUS, DEGREE) {
 	for(let i = 0; i < LEN; i++) {
 		for(let j = 0; j < LEN; j++){
-			if(Math.sqrt(Math.pow(i - m, 2) + Math.pow(j - n, 2)) < RADIUS)
-				MAIN[i][j] = infectionType;
+			if(Math.sqrt(Math.pow(i - x, 2) + Math.pow(j - y, 2)) < RADIUS)
+				DEG[i][j] = DEGREE;
 		}
 	}
 }
 
-// function loadScenario(tableLength, modelType, immC, delay) {
-function loadScenario(tableLength, immC) {
-	LEN = tableLength;
-	// MODEL = modelType;
-	INFECTION[4].immunityCHANCE = immC;
-	// cycleDelay = delay;
-
-	MAIN = createArray(LEN, LEN);
-	SCND = createArray(LEN, LEN);
-	DEG = createArray(LEN, LEN);
-	//HeatMap
-	timesInfected = createArray(LEN, LEN);
-
-	INFECTION_STATE = createArray(INFECTION.length - 1, LEN, LEN);
-
-	for(let x = 0; x < LEN; x++) {
-		for(let y = 0; y < LEN; y++) {
-			MAIN[x][y] = 0;
-			SCND[x][y] = 0;
-			DEG[x][y] = 4;
-			timesInfected[x][y] = 0;
-		}
-	}
-
-	/*switch(MODEL){
-		case "SIS":
-			document.getElementById("SISRADIO").checked = true;
-			break;
-		case "SIR":
-			document.getElementById("SIRRADIO").checked = true;
-			break;
-	}*/
-
-	// document.getElementById("infectionCHANCE").value = INFECTION[0].INFECTION_CHANCE * 100;
-	// document.getElementById("immunityCHANCE").value = immC * 100;
-	// document.getElementById("spAR").value = INFECTION[0].SPAR * 100;
-	
-	// updateModels();
-	IMMUNIZE();
-	// INITIALIZE();
-}
-
-function showInfectionInLegend(infectionType) {
-	if(INFECTION[infectionType].ENABLED == true)
-		return true;
-	return false;
-}
-
-function testFunc(e) {
-	console.log(e);
-}
-
-function toogleDataSeries(e){
-	if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-		e.dataSeries.visible = false;
-	} else{
-		e.dataSeries.visible = true;
-	}
-	chart.render();
-}
-
-function getStripLineOpacity() {
-	if(currentScenario == 12)
-		return 1;
-	return 0;
-}
-
+// Chart Functions
 function declareChart() {
 	chart = new CanvasJS.Chart("chartContainer", {
 		// theme: "light2",
@@ -1350,14 +1383,6 @@ function declareChart() {
 	});
 }
 
-function shiftAllDPS() {
-	deddps.shift();
-	susdps.shift();
-	avginfdps.shift();
-	for(let i = 0; i < INFECTION.length; i++)
-		INFECTION[i].dps.shift();
-}
-
 function updateChart() {
 		if(CYCLE == 0 || CYCLE == 1)
 			shiftAllDPS();
@@ -1417,54 +1442,36 @@ function updateChart() {
 	chart.render();
 }
 
-function initialInfectWith(m, n, infectionType) {
-	MAIN[m][n] = infectionType;
+function shiftAllDPS() {
+	deddps.shift();
+	susdps.shift();
+	avginfdps.shift();
+	for(let i = 0; i < INFECTION.length; i++)
+		INFECTION[i].dps.shift();
 }
 
-
-function previousScenario() {
-	if(currentScenario > 0) {
-		currentScenario--;
-		RESET();
-		loadScene(currentScenario);
-
+function toogleDataSeries(e) {
+	if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+		e.dataSeries.visible = false;
+	} else{
+		e.dataSeries.visible = true;
 	}
+	chart.render();
 }
 
-function nextScenario() {
-	if(currentScenario < SCENES.length - 1) {
-		currentScenario++;
-		RESET();
-		loadScene(currentScenario);
-	}
+function showInfectionInLegend(infectionType) {
+	if(INFECTION[infectionType].ENABLED == true)
+		return true;
+	return false;
 }
 
-
-function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE) {
-	INFECTION[infectionType].INFECTION_CHANCE = INF_CHANCE;
-	INFECTION[infectionType].SPAR = SPAR;
-	INFECTION[infectionType].ENABLED = STATUS;
-	INFECTION[infectionType].EVOLUTION_CHANCE = EVO_CHANCE;
-	INFECTION[infectionType].REINFECTION_CHANCE = REINF_CHANCE;
-	INFECTION[infectionType].DEATH_CHANCE = DED_CHANCE;
-	INFECTION[infectionType].RECOVERY_CHANCE = REC_CHANCE;
+function getStripLineOpacity() {
+	if(currentScenario == 12)
+		return 1;
+	return 0;
 }
 
-// function loadScenario(tableLength, modelType, infC, immC, spantaneousAR, delay)
-
-
-
-function loadScene(sceneCode){
-	SCENES[sceneCode]();
-	notFirstTime = false;
-	createTable();
-	drawTable();
-	document.getElementById("scenarioName").innerHTML = "&#8805;  Scenario " + sceneCode + " : " + sceneTitle;
-	document.getElementById("description").innerHTML = sceneDescription;
-	// updateSliderValue();
-	declareChart();
-}
-
+// Statistics Functions
 function returnToState() {
 	for(let x = 0; x < LEN; x++) {
 		for(let y = 0; y < LEN; y++) {
@@ -1513,37 +1520,35 @@ function calculateAverageInfectedByPercentageForCycleCount(CYCLECOUNT, PERCENTAG
 	return (infectionCount / repeat);
 }
 
-function setCycleTime(CT) {
-	document.getElementById("timeSlider").value = CT;
-	document.getElementById("cycleTime").innerHTML = CT + "ms";
-	cycleDelay = CT;
+// Statistics Functions
+function increaseInfectionDuration(i, j, k) {
+	INFECTION_STATE[i][j][k]++;
 }
 
-function updateCycleTime() {
-	let newCycleTime = document.getElementById("timeSlider").value;
-	cycleDelay = newCycleTime;
-	document.getElementById("cycleTime").innerHTML = newCycleTime + "ms";
-	if(runState == RUNNING) {
-		clearInterval(cancelCode);
-		cancelCode = setInterval(advanceCycle, newCycleTime);
+function decreaseInfectionDuration(i, j, k) {
+	INFECTION_STATE[i][j][k]--;
+}
+
+function resetInfectionDuration(i, j, k) {
+	INFECTION_STATE[i][j][k] = 0;
+}
+
+// Misc. Functions
+function oneToFourRand() {
+	let rand = Math.floor(Math.random() * 4) + 1;
+	return rand;
+}
+
+function createArray(length) {
+	var arr = new Array(length || 0),
+		i = length;
+
+	if (arguments.length > 1) {
+		var args = Array.prototype.slice.call(arguments, 1);
+		while(i--) arr[length-1 - i] = createArray.apply(this, args);
 	}
-}
 
-
-function resetBoundingBox() {
-	// let element = document.getElementById("creditsText");
-	// var rect = element.getBoundingClientRect();
-	// let newHeight = rect.y + window.pageYOffset + rect.height + 10;
-	// document.getElementById("boundingBox").style.height = newHeight + "px";
-	// document.getElementById("containerBox").style.height = Math.floor(1080 * 1080 / newHeight) + "px";
-}
-
-function setDatatableNum(text) {
-	document.getElementById("cycleFuncNum").innerHTML = text;
-}
-
-function setDatatableText(text) {
-	document.getElementById("cycleFuncText").innerHTML = text;
+		return arr;
 }
 
 function clearTableFromInfections() {
