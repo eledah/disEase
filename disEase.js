@@ -2,6 +2,10 @@
 
 let currentScenario = 1;
 let dataLength = 200;
+
+let SHOWHEALTHY = false;
+let SHOWDESC = true;
+
 let drawCellBorder = false;
 let drawChart = true;
 let drawGraphics = true;
@@ -49,6 +53,48 @@ let heatVision = false;
 let sceneTitle = "";
 let sceneDescription = "";
 
+// Infections
+let INFECTION_0 = {ID: 0, VALUE: 1.0, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#fa1e4e", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#800F28", RECOVERY_CHANCE: 0, POWER: 1};
+let INFECTION_1 = {ID: 1, VALUE: 1.1, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#38FF88", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#1C8044", RECOVERY_CHANCE: 0, POWER: 2};
+let INFECTION_2 = {ID: 2, VALUE: 1.2, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#FFFC45", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#807E22", RECOVERY_CHANCE: 0, POWER: 3};
+let INFECTION_3 = {ID: 3, VALUE: 1.3, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#FFA3FC", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#80527E", RECOVERY_CHANCE: 0, POWER: 4};
+
+// Infectious Immunities
+let IMMUNITY_0 = {ID: 0, VALUE: 3, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#8CF4FF", ENABLED: false, dps: [], immunityCHANCE: 0.005}
+
+let INFECTION = [INFECTION_0, INFECTION_1, INFECTION_2, INFECTION_3];
+let IMMUNITY = [IMMUNITY_0];
+
+const PAUSED = 1;
+const UNPAUSED = 0;
+const RUNNING = 1;
+
+// COLORS
+const COLOR_DEAD = "grey";
+const COLOR_IMMUNE = "#B3E5FC";
+const COLOR_SUSCEPTIBLE = "#0d0d0d";
+// Degrees
+const COLOR_SUSCEPTIBLE_5 = "1a1a1a";
+const COLOR_SUSCEPTIBLE_6 = "262626";
+const COLOR_SUSCEPTIBLE_7 = "333333";
+const COLOR_SUSCEPTIBLE_8 = "404040";
+
+
+// Chart Declaration
+let mainChart; 
+let chart;
+let averageInfected = 0;
+// Chart Datasets
+let infdps = [];
+let immdps = [];
+let deddps = [];
+let susdps = [];
+let avginfdps = [];
+let dedprdps = [];
+let deadThisRound = 0;
+
+let cycleFunction = function(){};
+
 // Scenarios
 let SCENES = [ 
 	// 0
@@ -87,7 +133,7 @@ let SCENES = [
 		loadScenario(21, 0);
 		setInfectionValues(0, 0.5, 0, true, 0, 0.5, 0.5, 0);
 		setInfection(10, 10, INFECTION[0].VALUE);
-
+		setCycleTime(150);
 		cycleFunction = function() {
 			setDatatableNum(countDead());
 			setDatatableText("Dead People");	
@@ -104,13 +150,13 @@ let SCENES = [
 	function() {
 		loadScenario(31, 0.01);
 		setInfectionValues(0, 0.75, 0, true, 0, 0.75, 0.1, 0);
-		INFECTION[4].ENABLED = true;
+		IMMUNITY[0].ENABLED = true;
 		setInfection(Math.floor(Math.random() * LEN), Math.floor(Math.random() * LEN), INFECTION[0].VALUE);
 		
 		cycleFunction = function() {
 			if(countDead() > 10) {
-				fillWithInfection(0, 15, 30, 15, INFECTION[4].VALUE);
-				fillWithInfection(15, 0, 15, 30, INFECTION[4].VALUE);
+				fillWithInfection(0, 15, 30, 15, IMMUNITY[0].VALUE);
+				fillWithInfection(15, 0, 15, 30, IMMUNITY[0].VALUE);
 			}
 
 			setDatatableNum(countDead());
@@ -130,8 +176,8 @@ let SCENES = [
 	function() {
 		loadScenario(31, 0.02);
 		setInfectionValues(0, 0.4, 0.2, true, 0, 0.6, 0, 0);
-		INFECTION[4].ENABLED = true;
-		fillWithInfection(10, 10, 20, 20, INFECTION[4].VALUE);
+		IMMUNITY[0].ENABLED = true;
+		fillWithInfection(10, 10, 20, 20, IMMUNITY[0].VALUE);
 		fillWithInfection(12, 12, 18, 18, 0);
 		sceneTitle = "How to Bypass Quarantines as a Virus?"
 		sceneDescription = "But does the quarantine method work anymore? Is 'Isolating the Child' a working method? Is 'Extreme Censorship' going to work for the governments? "
@@ -173,6 +219,7 @@ let SCENES = [
 		loadScenario(51, 0.02);
 		setInfectionValues(0, 0.15, 0.5, true, 0, 0.15, 0, 0);
 
+		setDatatableText("Infection Chance")
 		cycleFunction = function() {
 			if(CYCLE % 80 < 40) {
 				INFECTION[0].INFECTION_CHANCE += 0.02;
@@ -183,6 +230,7 @@ let SCENES = [
 				INFECTION[0].REINFECTION_CHANCE -= 0.02;
 				INFECTION[0].SPAR -= 0.5;
 			}
+			setDatatableNum(Math.floor(INFECTION[0].INFECTION_CHANCE * 100) + "%");
 		}
 		sceneTitle = "The Cycle of Life."
 		sceneDescription = "Why would anyone care about the suicide victims of 2013? We're well past that. Why would we care about forest fires that happened two weeks ago? "
@@ -214,6 +262,7 @@ let SCENES = [
 		let totalInfected = 0;
 		let totalYellow = 0;
 
+		setDatatableText("YELLOW's Share of Infections")
 		cycleFunction = function() {
 			INFECTION[0].INFECTION_CHANCE -= 0.01;
 			INFECTION[0].REINFECTION_CHANCE -= 0.01;
@@ -229,7 +278,6 @@ let SCENES = [
 			totalYellow += countInfectedByValue(INFECTION[2].VALUE);
 
 			setDatatableNum(Math.floor(totalYellow * 100 / totalInfected) + "%");
-			setDatatableText("YELLOW's Share of Infections")
 
 		}
 		sceneTitle = "A more Realistic Look Into the Fight."
@@ -265,9 +313,9 @@ let SCENES = [
 		setDegreesByRandom(0.004, 8);
 		
 
-		INFECTION[4].ENABLED = true;
-		INFECTION[4].SPAR = 0.002;
-		INFECTION[4].INFECTION_CHANCE = 0;
+		IMMUNITY[0].ENABLED = true;
+		IMMUNITY[0].SPAR = 0.002;
+		IMMUNITY[0].INFECTION_CHANCE = 0;
 
 		setInfection(25, 25, SUS);
 
@@ -333,7 +381,7 @@ let SCENES = [
 		setInfectionValues(0, 0.5, 5.1, true, 0, 0.5, 0, 0);
 		setInfectionValues(1, 0.7, 0.01, true, 0, 0.7, 0, 0);
 
-		INFECTION[4].ENABLED = true;
+		IMMUNITY[0].ENABLED = true;
 
 		setInfectionByRadius(10, 10, 3, INFECTION[0].VALUE);
 		setInfectionByRadius(40, 40, 2, INFECTION[1].VALUE);
@@ -484,12 +532,15 @@ let SCENES = [
 		setInfectionValues(0, 0.27, 0.3, true, 0, 0.27, 0, 0);
 
 		dataLength = 400;
+
+		setDatatableText("Infection + Reinfection Chance");
+
 		cycleFunction = function() {
 			if(CYCLE == 150)
 				setInfectionValues(0, 0.24, 0, true, 0, 0.24, 0, 0);
 			if(CYCLE == 300)
 				setInfectionValues(0, 0.30, 0.3, true, 0, 0.30, 0, 0);
-			
+			setDatatableNum(INFECTION[0].INFECTION_CHANCE);
 		}
 	},
 	// 15
@@ -519,10 +570,10 @@ let SCENES = [
 			setInfection(i, 0, INFECTION[0].VALUE);
 
 		for(let i = 0; i < 50; i++){
-			setInfection(10, i, INFECTION[4].VALUE);
-			setInfection(20, i, INFECTION[4].VALUE);
-			setInfection(30, i, INFECTION[4].VALUE);
-			setInfection(40, i, INFECTION[4].VALUE);
+			setInfection(10, i, IMMUNITY[0].VALUE);
+			setInfection(20, i, IMMUNITY[0].VALUE);
+			setInfection(30, i, IMMUNITY[0].VALUE);
+			setInfection(40, i, IMMUNITY[0].VALUE);
 			for(let j = 0; j <= 9; j++) {
 				setDegree(j, i, 4);
 				setDegree(j + 10, i, 5);
@@ -534,51 +585,6 @@ let SCENES = [
 		
 	}
 ]
-
-
-
-
-// Infections
-let INFECTION_0 = {ID: 0, VALUE: 1.0, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#fa1e4e", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#800F28", RECOVERY_CHANCE: 0, POWER: 1};
-let INFECTION_1 = {ID: 1, VALUE: 1.1, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#38FF88", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#1C8044", RECOVERY_CHANCE: 0, POWER: 2};
-let INFECTION_2 = {ID: 2, VALUE: 1.2, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#FFFC45", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#807E22", RECOVERY_CHANCE: 0, POWER: 3};
-let INFECTION_3 = {ID: 3, VALUE: 1.3, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#FFA3FC", ENABLED: false, dps: [], EVOLUTION_CHANCE: 0, REINFECTION_CHANCE: 0.2, DEATH_CHANCE: 0, DEATH_COLOR: "#80527E", RECOVERY_CHANCE: 0, POWER: 4};
-
-// Infectious Immunities
-let IMMUNITY_0 = {ID: 100, VALUE: 3, INFECTION_CHANCE: 0, SPAR: 0, COLOR: "#8CF4FF", ENABLED: false, dps: [], immunityCHANCE: 0.005}
-
-let INFECTION = [INFECTION_0, INFECTION_1, INFECTION_2, INFECTION_3, IMMUNITY_0];
-let IMMUNITY = [IMMUNITY_0];
-
-const PAUSED = 1;
-const UNPAUSED = 0;
-const RUNNING = 1;
-
-// COLORS
-const COLOR_DEAD = "grey";
-const COLOR_IMMUNE = "#B3E5FC";
-const COLOR_SUSCEPTIBLE = "#0d0d0d";
-// Degrees
-const COLOR_SUSCEPTIBLE_5 = "1a1a1a";
-const COLOR_SUSCEPTIBLE_6 = "262626";
-const COLOR_SUSCEPTIBLE_7 = "333333";
-const COLOR_SUSCEPTIBLE_8 = "404040";
-
-
-// Chart Declaration
-let mainChart; 
-let chart;
-let averageInfected = 0;
-// Chart Datasets
-let infdps = [];
-let immdps = [];
-let deddps = [];
-let susdps = [];
-let avginfdps = [];
-let dedprdps = [];
-let deadThisRound = 0;
-
-let cycleFunction = function(){};
 
 loadScene(currentScenario);
 drawTable();
@@ -640,8 +646,9 @@ function RESET() {
 function resetDatasets() {
 	for(let i = 0; i < INFECTION.length; i++)
 		INFECTION[i].dps = [];
-	infdps = [];
-	// immdps = [];
+	for(let i = 0; i < IMMUNITY.length; i++)
+		IMMUNITY[i].dps = [];
+	infdps = [];	
 	deddps = [];
 	susdps = [];
 	avginfdps = [];
@@ -667,7 +674,7 @@ function isPaused() {
 }
 
 function disableInfections() {
-	for(let i = 0; i < INFECTION.length; i++){
+	for(let i = 0; i < INFECTION.length; i++) {
 		INFECTION[i].SPAR = 0;
 		INFECTION[i].ENABLED = false;
 		INFECTION[i].DEATH_CHANCE = 0;
@@ -680,9 +687,9 @@ function disableInfections() {
 function IMMUNIZE() {
 	for(let i = 0; i < MAIN.length; i++) {
 		for(let j = 0; j < MAIN[i].length; j++){
-			if(MAIN[i][j] == INFECTION[4].VALUE)
+			if(MAIN[i][j] == IMMUNITY[0].VALUE)
 				MAIN[i][j] = SUS
-			if(Math.random() < INFECTION[4].immunityCHANCE)
+			if(Math.random() < IMMUNITY[0].immunityCHANCE)
 				MAIN[i][j] = IMM;
 		}
 	}
@@ -843,7 +850,7 @@ function updateCycleTime() {
 // Scenario Functions
 function loadScenario(tableLength, immC) {
 	LEN = tableLength;
-	INFECTION[4].immunityCHANCE = immC;
+	IMMUNITY[0].immunityCHANCE = immC;
 
 	MAIN = createArray(LEN, LEN);
 	SCND = createArray(LEN, LEN);
@@ -870,7 +877,12 @@ function loadScene(sceneCode) {
 	createTable();
 	drawTable();
 	document.getElementById("scenarioName").innerHTML = "&#8805;  Scenario " + sceneCode + " : " + sceneTitle;
-	document.getElementById("description").innerHTML = sceneDescription;
+	if(SHOWDESC)
+		document.getElementById("description").innerHTML = sceneDescription;
+	else {
+		document.getElementById("description").style.height = 0;
+		document.getElementById("boundingBox").style.height = "90%";		
+	}
 	declareChart();
 }
 
@@ -1025,6 +1037,10 @@ function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE,
 	INFECTION[infectionType].RECOVERY_CHANCE = REC_CHANCE;
 }
 
+function setImmunityValues() {
+
+}
+
 function infectWith(m, n, infectionValue) {
 	let infectionID = getIDbyValue(infectionValue);
 	if(Math.random() < INFECTION[infectionID].INFECTION_CHANCE){
@@ -1069,7 +1085,7 @@ function decideFate(m, n) {
 
  	// IMMUNITY
  	if(Math.random() < INFECTION[tempType].RECOVERY_CHANCE){
-		SCND[m][n] = INFECTION[4].VALUE;
+		SCND[m][n] = IMMUNITY[0].VALUE;
 		return;
  	}
 
@@ -1158,7 +1174,7 @@ function isDead(m, n) {
 }
 
 function isInfected(m, n) {
-	if(MAIN[m][n] >= INFECTION[0].VALUE && MAIN[m][n] <= INFECTION[INFECTION.length - 2].VALUE)
+	if(MAIN[m][n] >= INFECTION[0].VALUE && MAIN[m][n] <= INFECTION[INFECTION.length - 1].VALUE)
 		return true;
 	else
 		return false;
@@ -1199,7 +1215,7 @@ function countImmune() {
 	let count = 0;
 	for(let i = 0; i < MAIN.length; i++) {
 		for(let j = 0; j < MAIN[i].length; j++){
-			if(MAIN[i][j] == INFECTION[4].VALUE)
+			if(MAIN[i][j] == IMMUNITY[0].VALUE)
 				count++;
 		}
 	}
@@ -1221,7 +1237,7 @@ function countInfected() {
 	let count = 0;
 	for(let i = 0; i < LEN; i++) {
 		for(let j = 0; j < LEN; j++){
-			if(MAIN[i][j] >= INFECTION[0].VALUE && MAIN[i][j] <= INFECTION[INFECTION.length - 2].VALUE)
+			if(MAIN[i][j] >= INFECTION[0].VALUE && MAIN[i][j] <= INFECTION[INFECTION.length - 1].VALUE)
 				count++;
 		}
 	}
@@ -1352,7 +1368,7 @@ function declareChart() {
 				dataPoints: avginfdps
 			},
 			{
-				showInLegend: true,
+				showInLegend: SHOWHEALTHY,
 				type: "line",
 				name: "Healthy",
 				color: "#1565C0",
@@ -1362,8 +1378,8 @@ function declareChart() {
 				showInLegend: true,
 				type: "line",
 				name: "Immune",
-				color: INFECTION[4].COLOR,
-				dataPoints: INFECTION[4].dps	
+				color: IMMUNITY[0].COLOR,
+				dataPoints: IMMUNITY[0].dps	
 			},
 			{
 				showInLegend: true,
@@ -1400,15 +1416,30 @@ function updateChart() {
 			}
 		}
 
+		for(let i = 0; i < IMMUNITY.length; i++) {
+			if(IMMUNITY[i].ENABLED) {
+				IMMUNITY[i].dps.push({
+					x: CYCLE,
+					y: countImmune()
+				});
+
+				if (IMMUNITY[i].dps.length > dataLength) {
+					IMMUNITY[i].dps.shift();
+				}
+			}
+		}
+		
 		avginfdps.push({
 			x: CYCLE,
 			y: averageInfected
 		});
 
-		susdps.push({
-			x: CYCLE,
-			y: countSusceptible()
-		});
+		if(SHOWHEALTHY) { 
+				susdps.push({
+				x: CYCLE,
+				y: countSusceptible()
+			});
+		}
 
 		dedprdps.push({
 			x: CYCLE,
@@ -1419,10 +1450,6 @@ function updateChart() {
 			x: CYCLE,
 			y: countDead()
 		});
-
-	if (immdps.length > dataLength) {
-		immdps.shift();
-	}
 
 	if (deddps.length > dataLength) {
 		deddps.shift();
@@ -1448,6 +1475,8 @@ function shiftAllDPS() {
 	avginfdps.shift();
 	for(let i = 0; i < INFECTION.length; i++)
 		INFECTION[i].dps.shift();
+	for(let i = 0; i < IMMUNITY.length; i++)
+		IMMUNITY[i].dps.shift();
 }
 
 function toogleDataSeries(e) {
@@ -1483,7 +1512,6 @@ function returnToState() {
 	let midPerson = Math.floor(LEN / 2); 
 	MAIN[midPerson][midPerson] = INFECTION[0].VALUE;
 	SCND[midPerson][midPerson] = INFECTION[0].VALUE;
-
 }
 
 
@@ -1508,7 +1536,6 @@ function calculateAverageInfectedByPercentageForCycleCount(CYCLECOUNT, PERCENTAG
 	returnToState();
 	// function setInfectionValues(infectionType ,INF_CHANCE, SPAR, STATUS, EVO_CHANCE, REINF_CHANCE, DED_CHANCE, REC_CHANCE)
 	setInfectionValues(0, PERCENTAGE, 0, true, 0, PERCENTAGE, 0, 0);
-
 	for(let i = 0; i < repeat; i++){
 		while(CYCLE < CYCLECOUNT){
 			CYCLE++;
